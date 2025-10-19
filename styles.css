@@ -76,10 +76,11 @@ body {
     -webkit-perspective: 1000px;
 }
 
-/* INFO layers start hidden for better performance */
+/* INFO layers start visible but microscopic */
 .info-layer {
-    visibility: hidden;
-    opacity: 0;
+    visibility: visible;
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) scale(0.001);
 }
 
 /* lghtwvs 11 - true square that fills viewport */
