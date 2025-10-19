@@ -31,6 +31,8 @@ class ZoomScroll {
         // Performance flags
         this.lastBaseZoom = 0;
         this.lastScrollProgress = 0;
+        this.lastScrollY = 0;
+        this.cachedINFOScales = new Map();
 
         this.init();
     }
@@ -92,6 +94,17 @@ class ZoomScroll {
     onScroll() {
         const scrollY = window.scrollY;
         const scrollProgress = scrollY / this.scrollHeight; // 0 to 1
+
+        // Early exit if scrolling backward and nothing significant changed
+        const scrollDirection = scrollY > this.lastScrollY ? 'forward' : 'backward';
+        const scrollDelta = Math.abs(scrollProgress - this.lastScrollProgress);
+
+        // Skip heavy calculations on tiny backward scrolls
+        if (scrollDirection === 'backward' && scrollDelta < 0.001) {
+            this.lastScrollY = scrollY;
+            this.lastScrollProgress = scrollProgress;
+            return;
+        }
 
         // Cap zoom at 45% scroll (as DAVID MORIN starts to leave)
         const zoomCutoff = 0.45;
@@ -164,39 +177,48 @@ class ZoomScroll {
                     // Use visibility instead of display to avoid reflows
                     if (layer.style.visibility !== 'visible') {
                         layer.style.visibility = 'visible';
+                        layer.style.opacity = '1';
                     }
 
-                    // Calculate how much we've scrolled since overlay appeared
-                    const overlayStart = 0.33; // When baseZoom hits 3
-                    const progressSinceOverlay = Math.max(0, scrollProgress - overlayStart);
+                    // Check if we've already calculated this scale
+                    const scaleKey = `${scrollProgress.toFixed(3)}-${layerZoom.toFixed(2)}`;
+                    let finalScale;
 
-                    // Simplified scaling - linear with slight acceleration, no complex Math.pow
-                    const infoScaleStart = 0.01;
-                    // Simpler quadratic growth instead of exponential
-                    const growthFactor = progressSinceOverlay * 5; // Reduced from 8 to slow down zoom
-                    const infoScale = infoScaleStart + (growthFactor * growthFactor * 0.3); // Also reduced multiplier from 0.5 to 0.3
+                    if (this.cachedINFOScales.has(scaleKey)) {
+                        // Use cached value - much faster on forward scroll
+                        finalScale = this.cachedINFOScales.get(scaleKey);
+                    } else {
+                        // Calculate only if not cached
+                        const overlayStart = 0.33;
+                        const progressSinceOverlay = Math.max(0, scrollProgress - overlayStart);
 
-                    // Apply same parallax zoom as HERO, multiplied by INFO's growing scale
-                    // Cap maximum scale to prevent excessive rendering
-                    const finalScale = Math.min(layerZoom * infoScale, 50);
+                        // Simplified calculation
+                        const growthFactor = progressSinceOverlay * 5;
+                        const infoScale = 0.01 + (growthFactor * growthFactor * 0.3);
 
-                    // Round to 2 decimal places to reduce unique transforms
-                    const roundedScale = Math.round(finalScale * 100) / 100;
+                        finalScale = Math.min(layerZoom * infoScale, 50);
+                        finalScale = Math.round(finalScale * 100) / 100;
 
-                    // Cache the transform string
-                    const infoTransformKey = `info-${roundedScale}`;
+                        // Cache for reuse
+                        this.cachedINFOScales.set(scaleKey, finalScale);
+
+                        // Limit cache size to prevent memory issues
+                        if (this.cachedINFOScales.size > 200) {
+                            const firstKey = this.cachedINFOScales.keys().next().value;
+                            this.cachedINFOScales.delete(firstKey);
+                        }
+                    }
+
+                    // Use or create transform
+                    const infoTransformKey = `info-${finalScale}`;
                     if (!transforms.has(infoTransformKey)) {
-                        transforms.set(infoTransformKey, `translate3d(-50%, -50%, 0) scale(${roundedScale})`);
+                        transforms.set(infoTransformKey, `translate3d(-50%, -50%, 0) scale(${finalScale})`);
                     }
 
                     layer.style.transform = transforms.get(infoTransformKey);
-
-                    if (layer.style.opacity !== '1') {
-                        layer.style.opacity = '1';
-                    }
                 } else {
-                    // Use visibility instead of display
-                    if (layer.style.visibility !== 'hidden') {
+                    // Only update if actually visible
+                    if (layer.style.visibility === 'visible') {
                         layer.style.visibility = 'hidden';
                         layer.style.opacity = '0';
                     }
@@ -225,6 +247,10 @@ class ZoomScroll {
 
         // Update debug info
         this.updateDebug(scrollY, baseZoom);
+
+        // Store for next frame comparison
+        this.lastScrollY = scrollY;
+        this.lastScrollProgress = scrollProgress;
     }
 
     updateDebug(scrollY, zoom) {
