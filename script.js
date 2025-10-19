@@ -30,6 +30,21 @@ class ZoomScroll {
         // Listen for scroll events
         window.addEventListener('scroll', () => this.onScroll(), { passive: true });
 
+        // Touch support for mobile/Telegram
+        let touchStartY = 0;
+        let currentScroll = 0;
+
+        document.body.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+            currentScroll = window.scrollY;
+        }, { passive: true });
+
+        document.body.addEventListener('touchmove', (e) => {
+            const touchY = e.touches[0].clientY;
+            const deltaY = touchStartY - touchY;
+            window.scrollTo(0, currentScroll + deltaY);
+        }, { passive: false });
+
         // Initial update
         this.onScroll();
 
