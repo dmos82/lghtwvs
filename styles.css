@@ -458,29 +458,48 @@ body {
     }
 
     .info-content {
-        width: 90vw;
-        height: 90vw;
-        max-width: 500px;
-        max-height: 500px;
-        padding: 2rem;
+        width: 75vw;  /* Reduced from 90vw to fit within record */
+        height: 75vw;
+        max-width: 400px;  /* Reduced from 500px */
+        max-height: 400px;
+        padding: 1.5rem;  /* Reduced from 2rem */
     }
 
     .info-content h2 {
-        font-size: 2rem;
+        font-size: 1.5rem;  /* Reduced from 2rem */
+        margin-bottom: 0.5rem;  /* Reduced margin */
+    }
+
+    .bio {
+        font-size: 0.85rem;  /* Smaller bio text */
+        margin-bottom: 1rem;  /* Reduced margin */
+    }
+
+    .links-section {
+        margin-bottom: 1rem;  /* Reduced spacing between sections */
     }
 
     .links-section h3 {
-        font-size: 0.75rem;
+        font-size: 0.7rem;  /* Slightly smaller */
+        margin-bottom: 0.4rem;  /* Reduced margin */
+    }
+
+    .links {
+        gap: 0.6rem;  /* Reduced gap between links */
     }
 
     .links a {
-        font-size: 0.75rem;
-        padding: 0.3rem 0.8rem;
+        font-size: 0.7rem;  /* Smaller link text */
+        padding: 0.25rem 0.6rem;  /* Smaller padding */
+    }
+
+    .store-link {
+        margin-top: 1.5rem;  /* Reduced from 2rem */
     }
 
     .store-button {
-        padding: 1rem 2rem;
-        font-size: 1rem;
+        padding: 0.8rem 1.5rem;  /* Smaller button */
+        font-size: 0.9rem;  /* Smaller text */
     }
 
     .spinning-lp {
