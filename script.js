@@ -80,11 +80,12 @@ class ZoomScroll {
 
         console.log('✅ Zoom Scroll initialized');
         console.log(`   Scroll height: ${this.scrollHeight}px (reduced for faster response)`);
-        console.log(`   Zoom range: ${this.minZoom}x - 6x (stops at 45% scroll)`);
+        console.log(`   Zoom range: ${this.minZoom}x - 6x (stops at 75% scroll)`);
         console.log(`   Mobile starts at 5% zoom (slight zoom for balance)`);
         console.log(`   HERO layers: ${this.heroLayers.length} (reduced from 8 to 6 with merged images)`);
         console.log(`   INFO layers: ${this.infoLayers.length} (always visible, start microscopic)`);
         console.log(`   Overlay text: Always visible (no fade-in lag)`);
+        console.log(`   Info panel & curtain: Appear at 35% scroll (15% earlier)`);
         console.log(`   Press 'd' to toggle debug info`);
     }
 
@@ -92,8 +93,8 @@ class ZoomScroll {
         const scrollY = window.scrollY;
         const scrollProgress = scrollY / this.scrollHeight; // 0 to 1
 
-        // Cap zoom at 45% scroll (as DAVID MORIN starts to leave)
-        const zoomCutoff = 0.45;
+        // Cap zoom at 75% scroll (extended zoom range)
+        const zoomCutoff = 0.75;
         const cappedScrollProgress = Math.min(scrollProgress, zoomCutoff);
 
         // Calculate base zoom level - start mobile at 5% progress (zoom ~1.45)
@@ -103,10 +104,10 @@ class ZoomScroll {
             effectiveProgress = 0.05 + (cappedScrollProgress * 0.95);
         }
 
-        // Zoom progresses from 0-45% scroll, then stays constant
-        // Scale to make zoom reach ~6x at 45% scroll (instead of 10x at 100%)
+        // Zoom progresses from 0-75% scroll, then stays constant
+        // Scale to make zoom reach ~6x at 75% scroll
         const maxZoomAtCutoff = 6;
-        const baseZoom = this.minZoom + (effectiveProgress * 2.22 * (maxZoomAtCutoff - this.minZoom));
+        const baseZoom = this.minZoom + (effectiveProgress * 1.33 * (maxZoomAtCutoff - this.minZoom));
 
         // Show overlay when zoomed in (around 33% scroll is when baseZoom hits ~3)
         const overlayThreshold = 3;
@@ -199,8 +200,8 @@ class ZoomScroll {
         // Overlay is now always visible from start - no state changes needed
         // The curtain effect still happens at the right time
 
-        // Show info panel when INFO images have grown significantly (around 50% scroll)
-        const infoPanelThreshold = 0.50; // Reduced from 0.60 to show spinning record earlier
+        // Show info panel when INFO images have grown significantly (moved 15% earlier)
+        const infoPanelThreshold = 0.35; // Moved from 0.50 to 0.35 (15% earlier)
         if (scrollProgress > infoPanelThreshold) {
             this.infoPanel.classList.add('visible');
             // Trigger curtain effect when info panel opens
