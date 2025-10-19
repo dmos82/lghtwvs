@@ -51,7 +51,8 @@ body {
 }
 
 /* Each hero layer image - all stacked on top of each other */
-.hero-layer {
+.hero-layer,
+.info-layer {
     position: absolute;
     top: 50%;
     left: 50%;
