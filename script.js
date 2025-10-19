@@ -49,6 +49,9 @@ class InfiniteZoomScroll {
         this.preloadImages();
         this.bindEvents();
 
+        // Initialize with first image visible
+        this.update();
+
         // Hide loading indicator
         setTimeout(() => {
             if (this.elements.loadingIndicator) {
