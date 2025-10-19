@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>David Morin - Light Waves</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Scroll Height Controller: Determines total scroll depth -->
+    <div class="scroll-container"></div>
+
+    <!-- Hero Section: Images 1-11 zoom progression -->
+    <section class="zoom-section hero-section" id="heroSection" data-start-image="1" data-end-image="11" data-folder="HERO">
+        <div class="zoom-viewport">
+            <div class="zoom-layer" id="heroLayer">
+                <img id="heroImage" src="HERO/lghtwvs 1.JPG" alt="Hero image" class="zoom-image">
+            </div>
+        </div>
+
+        <!-- Interactive overlay - will be revealed as zoom progresses -->
+        <div class="zoom-overlay hero-overlay" id="heroOverlay">
+            <div class="overlay-content">
+                <h1>DAVID MORIN</h1>
+                <p class="subtitle">LIGHT WAVES</p>
+                <a href="#" class="cta-button">LISTEN NOW</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Section: Images 1-7 zoom progression -->
+    <section class="zoom-section info-section" id="infoSection" data-start-image="1" data-end-image="7" data-folder="INFO">
+        <div class="zoom-viewport">
+            <div class="zoom-layer" id="infoLayer">
+                <img id="infoImage" src="INFO/LGHTWVS INFO 1.TIF" alt="Info image" class="zoom-image">
+            </div>
+        </div>
+
+        <!-- Interactive overlay for info section -->
+        <div class="zoom-overlay info-overlay" id="infoOverlay">
+            <div class="overlay-content">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h2>MUSIC</h2>
+                        <a href="#">Stream Now</a>
+                    </div>
+                    <div class="info-card">
+                        <h2>TOUR</h2>
+                        <a href="#">See Dates</a>
+                    </div>
+                    <div class="info-card">
+                        <h2>VIDEOS</h2>
+                        <a href="#">Watch</a>
+                    </div>
+                    <div class="info-card">
+                        <h2>GALLERY</h2>
+                        <a href="#">View</a>
+                    </div>
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-icon">Spotify</a>
+                    <a href="#" class="social-icon">Instagram</a>
+                    <a href="#" class="social-icon">YouTube</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading indicator -->
+    <div class="loading-indicator" id="loadingIndicator">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Zoom level debug info (can be hidden in production) -->
+    <div class="debug-info" id="debugInfo">
+        <div>Scroll: <span id="scrollPercent">0</span>%</div>
+        <div>Zoom: <span id="zoomLevel">1.0</span>x</div>
+        <div>Section: <span id="currentSection">HERO</span></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
