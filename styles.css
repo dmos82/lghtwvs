@@ -70,16 +70,19 @@ body {
     -webkit-backface-visibility: hidden;
 }
 
-/* lghtwvs 11 - fill entire page as frame */
+/* lghtwvs 11 - fill entire page as square frame */
 .hero-layer:nth-child(1) {
     max-width: 100%;
     max-height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
 }
 
-/* lghtwvs 9 - make smaller to reveal lghtwvs 11 around edges */
+/* lghtwvs 9 - bigger and positioned lower */
 .hero-layer:nth-child(2) {
-    max-width: 70%;
-    max-height: 70%;
+    max-width: 80%;
+    max-height: 80%;
+    transform: translate3d(-50%, -40%, 0);
 }
 
 /* Overlay text */
