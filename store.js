@@ -9,61 +9,61 @@ const products = [
         title: 'Vintage Sunset - T-Shirt',
         price: '$24.99',
         handle: 'vintage-sunset-t-shirt-2',
-        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-t-shirt_ea52c508-4cfb-42af-bb52-a93ac14b1640.jpg?v=1760852325'
+        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-t-shirt_a9bb627c-3cdc-4639-8b56-37c12e531304.jpg?v=1760860006'
     },
     {
         title: 'Vintage Sunset - Hoodie',
         price: '$44.99',
         handle: 'vintage-sunset-hoodie-2',
-        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-hoodie_6f53d90d-a779-4f81-aa6e-c13f7d197cab.jpg?v=1760852328'
+        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-hoodie.jpg?v=1760859445'
     },
     {
         title: 'Vintage Sunset - Mug',
         price: '$14.99',
         handle: 'vintage-sunset-mug-2',
-        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-mug_ec1ef1c4-64df-4295-a860-a4e5c2048eb5.jpg?v=1760852330'
+        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-mug.jpg?v=1760859429'
     },
     {
         title: 'Vintage Sunset - Poster',
         price: '$19.99',
         handle: 'vintage-sunset-poster-2',
-        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-poster_fdba9d80-d657-418e-b498-9675c7bf70c9.jpg?v=1760852336'
+        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-poster.jpg?v=1760859386'
     },
     {
         title: 'Vintage Sunset - Canvas Print',
         price: '$39.99',
         handle: 'vintage-sunset-canvas-print-2',
-        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-canvas-print_4e22419b-fa4a-4d89-b590-a8d35b7f1e27.jpg?v=1760852336'
+        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-canvas-print.jpg?v=1760859345'
     },
     {
         title: 'Vintage Sunset - Sticker',
         price: '$3.99',
         handle: 'vintage-sunset-sticker-2',
-        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-sticker_56541017-d5c0-4e7f-893d-86158a361490.jpg?v=1760852339'
+        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-sticker.jpg?v=1760859320'
     },
     {
         title: 'Vintage Sunset - Hat',
         price: '$19.99',
         handle: 'vintage-sunset-hat-1',
-        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-hat_3674e4da-e30e-47d4-95b9-2d599abc2c85.jpg?v=1760852342'
+        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-hat.jpg?v=1760859291'
     },
     {
         title: 'Vintage Sunset - Backpack',
         price: '$34.99',
         handle: 'vintage-sunset-backpack-1',
-        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-backpack.jpg?v=1760852349'
+        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-backpack.jpg?v=1760859271'
     },
     {
         title: 'Vintage Sunset - Tote Bag',
         price: '$16.99',
         handle: 'vintage-sunset-tote-bag-1',
-        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-tote-bag_39da68f4-ceb0-4fe6-b420-1b15f261b051.jpg?v=1760852346'
+        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-tote-bag.jpg?v=1760859232'
     },
     {
         title: 'Vintage Sunset - Water Bottle',
         price: '$24.99',
         handle: 'vintage-sunset-water-bottle-1',
-        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-water-bottle_29c6c3e2-1d93-4910-9977-4e49c1a45491.jpg?v=1760852354'
+        image: 'https://cdn.shopify.com/s/files/1/0939/8222/8764/files/vintage-sunset-water-bottle.jpg?v=1760859212'
     }
 ];
 
