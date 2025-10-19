@@ -51,9 +51,9 @@ class ZoomScroll {
 
             // Fade out image 9 as we scroll (reveal image 11 behind it)
             if (layer.alt === 'Layer 9') {
-                // Quick fade: Start at 60%, fully transparent by 65%
-                const fadeStart = 0.6;
-                const fadeEnd = 0.65;
+                // Fade starts immediately at scroll position 0, fully transparent by 5%
+                const fadeStart = 0;
+                const fadeEnd = 0.05;
 
                 if (scrollProgress < fadeStart) {
                     layer.style.opacity = '1';
