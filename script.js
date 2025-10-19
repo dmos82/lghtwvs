@@ -10,10 +10,12 @@ class ZoomScroll {
         this.scrollContainer = document.querySelector('.scroll-container');
         this.overlay = document.getElementById('overlay');
         this.debugInfo = document.getElementById('debugInfo');
-        this.layers = document.querySelectorAll('.hero-layer');
+        this.heroLayers = document.querySelectorAll('.hero-layer');
+        this.infoLayers = document.querySelectorAll('.info-layer');
+        this.allLayers = document.querySelectorAll('.hero-layer, .info-layer');
 
         // Scroll settings
-        this.scrollHeight = 5000; // Total scrollable height
+        this.scrollHeight = 8000; // Total scrollable height (increased for INFO section)
         this.minZoom = 1; // Starting zoom level
         this.maxZoom = 10; // Maximum zoom level
 
@@ -33,7 +35,8 @@ class ZoomScroll {
         console.log('✅ Zoom Scroll initialized');
         console.log(`   Scroll height: ${this.scrollHeight}px`);
         console.log(`   Zoom range: ${this.minZoom}x - ${this.maxZoom}x`);
-        console.log(`   Layers with varying speeds: ${this.layers.length}`);
+        console.log(`   HERO layers: ${this.heroLayers.length}`);
+        console.log(`   INFO layers: ${this.infoLayers.length}`);
     }
 
     onScroll() {
@@ -43,14 +46,25 @@ class ZoomScroll {
         // Calculate base zoom level
         const baseZoom = this.minZoom + (scrollProgress * (this.maxZoom - this.minZoom));
 
+        // Determine which section we're in (HERO for first 50%, INFO for last 50%)
+        const inInfoSection = scrollProgress > 0.5;
+
         // Apply different zoom speeds to each layer (parallax effect)
-        this.layers.forEach(layer => {
+        this.allLayers.forEach(layer => {
+            const section = layer.dataset.section;
             const speed = parseFloat(layer.dataset.speed) || 1;
             const layerZoom = 1 + ((baseZoom - 1) * speed);
-            layer.style.transform = `translate(-50%, -50%) scale(${layerZoom})`;
+
+            // Show/hide based on section
+            if ((section === 'hero' && !inInfoSection) || (section === 'info' && inInfoSection)) {
+                layer.style.display = 'block';
+                layer.style.transform = `translate(-50%, -50%) scale(${layerZoom})`;
+            } else {
+                layer.style.display = 'none';
+            }
 
             // Fade out image 9 as we scroll (reveal image 11 behind it)
-            if (layer.alt === 'Layer 9') {
+            if (layer.alt === 'Layer 9' && !inInfoSection) {
                 // Fade starts immediately at scroll position 0, fully transparent by 6%
                 const fadeStart = 0;
                 const fadeEnd = 0.06;
