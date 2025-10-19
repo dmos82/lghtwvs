@@ -72,6 +72,8 @@ body {
     contain: layout style paint;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
+    -webkit-transform-style: preserve-3d;
+    -webkit-perspective: 1000px;
 }
 
 /* lghtwvs 11 - true square that fills viewport */
@@ -92,7 +94,7 @@ body {
 
 /* lghtwvs 8 - positioned at bottom to hide cut-off legs */
 .hero-layer:nth-child(3) {
-    top: 60%;
+    top: 70%;
     transform: translate3d(-50%, -50%, 0) scale(1);
 }
 
@@ -398,12 +400,44 @@ body {
     }
 }
 
+/* Safari Mobile Specific Performance Fixes */
+@supports (-webkit-touch-callout: none) {
+    /* iOS Safari specific styles */
+    .hero-layer,
+    .info-layer {
+        -webkit-transform: translate3d(-50%, -50%, 0) scale(1);
+        -webkit-backface-visibility: hidden;
+        -webkit-perspective: 1000px;
+    }
+
+    .viewport {
+        -webkit-transform: translateZ(0);
+        -webkit-perspective: 1000px;
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
+    /* Aggressive performance optimizations for mobile */
     .hero-layer,
     .info-layer {
         max-width: 95%;
         max-height: 95%;
+        will-change: auto !important; /* Let Safari manage this */
+        image-rendering: optimizeSpeed; /* Faster rendering on mobile */
+    }
+
+    /* Disable some layers on mobile for better performance */
+    .hero-layer:nth-child(4),
+    .hero-layer:nth-child(5),
+    .hero-layer:nth-child(6) {
+        display: none; /* Hide middle layers on mobile to improve performance */
+    }
+
+    /* lghtwvs 8 - push further down on mobile to hide truncated legs */
+    .hero-layer:nth-child(3) {
+        top: 75%; /* Push down more on mobile */
+        max-height: 80vh; /* Limit height to prevent excessive scaling */
     }
 
     .overlay h1 {

@@ -39,22 +39,46 @@ class ZoomScroll {
         // Set scroll container height
         this.scrollContainer.style.height = this.scrollHeight + 'px';
 
+        // Detect mobile Safari for specific optimizations
+        this.isMobileSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        this.isMobile = window.innerWidth <= 768;
+
         // Use requestAnimationFrame for smooth 60fps updates
         this.ticking = false;
         this.lastScrollY = 0;
+        this.frameCount = 0;
 
         // Listen for scroll events with RAF throttling
-        window.addEventListener('scroll', () => {
+        const scrollHandler = () => {
             this.lastScrollY = window.scrollY;
 
             if (!this.ticking) {
                 window.requestAnimationFrame(() => {
-                    this.onScroll();
+                    this.frameCount++;
+                    // On mobile Safari, skip frames for better performance
+                    if (this.isMobileSafari) {
+                        // Only update every 3rd frame on mobile Safari
+                        if (this.frameCount % 3 === 0) {
+                            this.onScroll();
+                        }
+                    } else if (this.isMobile) {
+                        // Update every other frame on other mobile browsers
+                        if (this.frameCount % 2 === 0) {
+                            this.onScroll();
+                        }
+                    } else {
+                        // Desktop gets every frame
+                        this.onScroll();
+                    }
                     this.ticking = false;
                 });
                 this.ticking = true;
             }
-        }, { passive: true });
+        };
+
+        // Use passive listener for better scroll performance
+        window.addEventListener('scroll', scrollHandler, { passive: true, capture: false });
+        window.addEventListener('touchmove', scrollHandler, { passive: true });
 
         // Initial update
         this.onScroll();
@@ -78,8 +102,9 @@ class ZoomScroll {
         const scrollY = window.scrollY;
         const scrollProgress = scrollY / this.scrollHeight; // 0 to 1
 
-        // Calculate base zoom level
-        const baseZoom = this.minZoom + (scrollProgress * (this.maxZoom - this.minZoom));
+        // Calculate base zoom level (reduce range on mobile for performance)
+        const maxZoomMobile = this.isMobile ? 5 : this.maxZoom;
+        const baseZoom = this.minZoom + (scrollProgress * (maxZoomMobile - this.minZoom));
 
         // Show overlay when zoomed in (around 33% scroll is when baseZoom hits ~3)
         const overlayThreshold = 3;
@@ -91,7 +116,20 @@ class ZoomScroll {
         // Process layers in a single pass with optimized loops using cached data
         for (let i = 0; i < this.layerData.length; i++) {
             const { element: layer, section, speed, isLayer9 } = this.layerData[i];
-            const layerZoom = 1 + ((baseZoom - 1) * speed);
+
+            // Skip hidden layers on mobile
+            if (this.isMobile && layer.style.display === 'none') continue;
+
+            // Simplified zoom calculation for mobile Safari
+            let layerZoom;
+            if (this.isMobileSafari) {
+                // Round values to reduce transform recalculations
+                const roundedBaseZoom = Math.round(baseZoom * 10) / 10;
+                layerZoom = 1 + ((roundedBaseZoom - 1) * speed);
+                layerZoom = Math.round(layerZoom * 100) / 100; // Round to 2 decimals
+            } else {
+                layerZoom = 1 + ((baseZoom - 1) * speed);
+            }
 
             // HERO section - always visible, zooms normally
             if (section === 'hero') {
