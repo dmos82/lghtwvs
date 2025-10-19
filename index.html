@@ -7,71 +7,59 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Scroll Height Controller: Determines total scroll depth -->
+    <!-- Scroll container for enabling scroll -->
     <div class="scroll-container"></div>
 
-    <!-- Hero Section: Images 1-11 zoom progression -->
-    <section class="zoom-section hero-section" id="heroSection">
-        <div class="zoom-layer" id="heroLayer">
-            <img id="heroImage" src="HERO/lghtwvs 1.JPG" alt="Hero image" class="zoom-image">
-        </div>
-
-        <!-- Interactive overlay - will be revealed as zoom progresses -->
-        <div class="zoom-overlay hero-overlay" id="heroOverlay">
-            <div class="overlay-content">
+    <!-- Viewport - everything zooms inside here -->
+    <div class="viewport">
+        <!-- HERO Section - Layered images -->
+        <section class="section hero-section" id="heroSection">
+            <div class="images-stack" id="heroStack">
+                <!-- All HERO images stacked on top of each other -->
+                <img src="HERO/lghtwvs 1.JPG" alt="HERO 1" class="layer" data-layer="0">
+                <img src="HERO/lghtwvs 2.JPG" alt="HERO 2" class="layer" data-layer="1">
+                <img src="HERO/lghtwvs 3.JPG" alt="HERO 3" class="layer" data-layer="2">
+                <img src="HERO/lghtwvs 4.JPG" alt="HERO 4" class="layer" data-layer="3">
+                <img src="HERO/lghtwvs 5.JPG" alt="HERO 5" class="layer" data-layer="4">
+                <img src="HERO/lghtwvs 6.JPG" alt="HERO 6" class="layer" data-layer="5">
+                <img src="HERO/lghtwvs 9.JPG" alt="HERO 9" class="layer" data-layer="6">
+                <img src="HERO/lghtwvs 10.JPG" alt="HERO 10" class="layer" data-layer="7">
+                <img src="HERO/lghtwvs 11.JPG" alt="HERO 11" class="layer" data-layer="8">
+            </div>
+            <div class="overlay hero-overlay">
                 <h1>DAVID MORIN</h1>
                 <p class="subtitle">LIGHT WAVES</p>
-                <a href="#" class="cta-button">LISTEN NOW</a>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Info Section: Images 1-7 zoom progression -->
-    <section class="zoom-section info-section" id="infoSection">
-        <div class="zoom-layer" id="infoLayer">
-            <img id="infoImage" src="INFO/LGHTWVS INFO 1.TIF" alt="Info image" class="zoom-image">
-        </div>
-
-        <!-- Interactive overlay for info section -->
-        <div class="zoom-overlay info-overlay" id="infoOverlay">
-            <div class="overlay-content">
+        <!-- INFO Section - Layered images -->
+        <section class="section info-section" id="infoSection">
+            <div class="images-stack" id="infoStack">
+                <!-- All INFO images stacked on top of each other -->
+                <img src="INFO/LGHTWVS INFO 1.TIF" alt="INFO 1" class="layer" data-layer="0">
+                <img src="INFO/LGHTWVS INFO 2.TIF" alt="INFO 2" class="layer" data-layer="1">
+                <img src="INFO/LGHTWVS INFO 3.TIF" alt="INFO 3" class="layer" data-layer="2">
+                <img src="INFO/LGHTWVS INFO 4.TIF" alt="INFO 4" class="layer" data-layer="3">
+                <img src="INFO/LGHTWVS INFO 5.TIF" alt="INFO 5" class="layer" data-layer="4">
+                <img src="INFO/LGHTWVS INFO 6.TIF" alt="INFO 6" class="layer" data-layer="5">
+                <img src="INFO/LGHTWVS INFO 7.TIF" alt="INFO 7" class="layer" data-layer="6">
+            </div>
+            <div class="overlay info-overlay">
                 <div class="info-grid">
-                    <div class="info-card">
-                        <h2>MUSIC</h2>
-                        <a href="#">Stream Now</a>
-                    </div>
-                    <div class="info-card">
-                        <h2>TOUR</h2>
-                        <a href="#">See Dates</a>
-                    </div>
-                    <div class="info-card">
-                        <h2>VIDEOS</h2>
-                        <a href="#">Watch</a>
-                    </div>
-                    <div class="info-card">
-                        <h2>GALLERY</h2>
-                        <a href="#">View</a>
-                    </div>
-                </div>
-                <div class="social-links">
-                    <a href="#" class="social-icon">Spotify</a>
-                    <a href="#" class="social-icon">Instagram</a>
-                    <a href="#" class="social-icon">YouTube</a>
+                    <div class="info-card"><h2>MUSIC</h2><a href="#">Stream</a></div>
+                    <div class="info-card"><h2>TOUR</h2><a href="#">Dates</a></div>
+                    <div class="info-card"><h2>VIDEOS</h2><a href="#">Watch</a></div>
+                    <div class="info-card"><h2>GALLERY</h2><a href="#">View</a></div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Loading indicator -->
-    <div class="loading-indicator" id="loadingIndicator">
-        <div class="spinner"></div>
+        </section>
     </div>
 
-    <!-- Zoom level debug info (can be hidden in production) -->
+    <!-- Debug info -->
     <div class="debug-info" id="debugInfo">
-        <div>Scroll: <span id="scrollPercent">0</span>%</div>
+        <div>Scroll: <span id="scrollPos">0</span>px</div>
+        <div>Layer: <span id="layerNum">1</span></div>
         <div>Zoom: <span id="zoomLevel">1.0</span>x</div>
-        <div>Section: <span id="currentSection">HERO</span></div>
     </div>
 
     <script src="script.js"></script>

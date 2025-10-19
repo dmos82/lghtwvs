@@ -1,120 +1,135 @@
 // ========================================
 // INFINITE ZOOM SCROLL - Light Waves
-// Simplified implementation
+// Layered images with zoom effect
 // ========================================
 
 class InfiniteZoomScroll {
     constructor() {
-        this.heroImageIndices = [1, 2, 3, 4, 5, 6, 9, 10, 11]; // Actual hero images
-        this.infoImageIndices = [1, 2, 3, 4, 5, 6, 7]; // All info images
+        // Image configurations
+        this.heroImages = [1, 2, 3, 4, 5, 6, 9, 10, 11];
+        this.infoImages = [1, 2, 3, 4, 5, 6, 7];
 
+        // State
         this.state = {
-            scrollPosition: 0,
-            currentImageIndex: 0,
-            isHeroSection: true,
+            scrollY: 0,
+            currentLayer: 0,
+            currentSection: 'hero'
         };
 
-        this.elements = {
-            heroImage: document.getElementById('heroImage'),
-            infoImage: document.getElementById('infoImage'),
-            heroSection: document.getElementById('heroSection'),
-            infoSection: document.getElementById('infoSection'),
-            heroLayer: document.getElementById('heroLayer'),
-            infoLayer: document.getElementById('infoLayer'),
-            scrollContainer: document.querySelector('.scroll-container'),
-            debugInfo: document.getElementById('debugInfo'),
-        };
+        // Scroll settings
+        this.pixelsPerLayer = 200; // Scroll distance per layer
+        this.maxZoom = 3; // Max zoom scale
+
+        // DOM elements
+        this.viewport = document.querySelector('.viewport');
+        this.scrollContainer = document.querySelector('.scroll-container');
+        this.heroSection = document.getElementById('heroSection');
+        this.infoSection = document.getElementById('infoSection');
+        this.heroStack = document.getElementById('heroStack');
+        this.infoStack = document.getElementById('infoStack');
+        this.debugInfo = document.getElementById('debugInfo');
 
         this.init();
     }
 
     init() {
-        // Set scroll container height - much taller to enable proper scrolling
-        const totalImages = this.heroImageIndices.length + this.infoImageIndices.length;
-        const pixelsPerImage = 300; // Scroll distance per image (increased for better control)
-        const scrollHeight = totalImages * pixelsPerImage * 3; // Tripled for more scrolling room
-        this.elements.scrollContainer.style.height = scrollHeight + 'px';
+        // Set scroll container height to allow scrolling through all layers
+        const totalLayers = this.heroImages.length + this.infoImages.length;
+        const totalScrollHeight = totalLayers * this.pixelsPerLayer * 4; // Extra room for zoom effect
+        this.scrollContainer.style.height = totalScrollHeight + 'px';
 
-        // Show first image on load
-        this.updateDisplay();
+        // Initialize first layer as active
+        this.setActiveLayer(0, 'hero');
 
-        // Bind scroll event
+        // Listen for scroll
         window.addEventListener('scroll', () => this.onScroll());
 
-        // Log for debugging
-        console.log(`✅ Zoom Scroll initialized`);
-        console.log(`  - Total images: ${totalImages}`);
-        console.log(`  - Scroll height: ${scrollHeight}px`);
-        console.log(`  - Pixels per image: ${pixelsPerImage}px`);
+        console.log('✅ Zoom Scroll initialized');
+        console.log(`   Hero layers: ${this.heroImages.length}`);
+        console.log(`   Info layers: ${this.infoImages.length}`);
+        console.log(`   Total scroll height: ${totalScrollHeight}px`);
     }
 
     onScroll() {
-        this.state.scrollPosition = window.scrollY;
+        this.state.scrollY = window.scrollY;
         this.updateDisplay();
     }
 
     updateDisplay() {
-        const pixelsPerImage = 300; // Must match init()
-        const scrollProgress = this.state.scrollPosition / pixelsPerImage;
+        // Calculate which layer to show and zoom level
+        const scrollProgress = this.state.scrollY / this.pixelsPerLayer;
+        const layerIndex = Math.floor(scrollProgress);
+        const layerProgress = scrollProgress - layerIndex; // 0-1 progress within layer
 
-        // Total hero images
-        const heroCount = this.heroImageIndices.length;
+        // Determine which section we're in
+        const heroCount = this.heroImages.length;
+        let activeLayer = layerIndex;
+        let section = 'hero';
 
-        if (scrollProgress < heroCount) {
-            // Show HERO section
-            this.state.isHeroSection = true;
-            this.elements.heroSection.classList.add('active');
-            this.elements.infoSection.classList.remove('active');
+        if (layerIndex >= heroCount) {
+            section = 'info';
+            activeLayer = layerIndex - heroCount;
+        }
 
-            const imageIndex = Math.floor(scrollProgress);
-            const clamped = Math.min(imageIndex, heroCount - 1);
-            const actualImageNum = this.heroImageIndices[clamped];
+        // Update section visibility
+        this.updateSectionVisibility(section);
 
-            this.elements.heroImage.src = `HERO/lghtwvs ${actualImageNum}.JPG`;
+        // Update layer visibility
+        this.updateLayers(activeLayer, section);
 
-            // Calculate zoom based on scroll within this image
-            const zoomProgress = scrollProgress - imageIndex;
-            const scale = 1 + (zoomProgress * 5); // Zoom from 1x to 6x per image
-            this.elements.heroLayer.style.transform = `scale(${scale})`;
+        // Calculate zoom based on progress within layer
+        const zoom = 1 + (layerProgress * (this.maxZoom - 1));
+        this.viewport.style.transform = `scale(${zoom})`;
 
-            this.updateDebug(`HERO ${clamped + 1}/${heroCount}`, scrollProgress.toFixed(2), scale.toFixed(2));
+        // Update debug info
+        this.updateDebug(layerIndex, activeLayer, section, zoom);
+    }
+
+    updateSectionVisibility(section) {
+        if (section === 'hero') {
+            this.heroSection.classList.remove('hidden');
+            this.infoSection.classList.add('hidden');
+            this.state.currentSection = 'hero';
         } else {
-            // Show INFO section
-            this.state.isHeroSection = false;
-            this.elements.infoSection.classList.add('active');
-            this.elements.heroSection.classList.remove('active');
-
-            const infoScroll = scrollProgress - heroCount;
-            const infoCount = this.infoImageIndices.length;
-            const imageIndex = Math.floor(infoScroll);
-            const clamped = Math.min(imageIndex, infoCount - 1);
-            const actualImageNum = this.infoImageIndices[clamped];
-
-            this.elements.infoImage.src = `INFO/LGHTWVS INFO ${actualImageNum}.TIF`;
-
-            // Calculate zoom
-            const zoomProgress = infoScroll - imageIndex;
-            const scale = 1 + (zoomProgress * 5);
-            this.elements.infoLayer.style.transform = `scale(${scale})`;
-
-            this.updateDebug(`INFO ${clamped + 1}/${infoCount}`, infoScroll.toFixed(2), scale.toFixed(2));
+            this.heroSection.classList.add('hidden');
+            this.infoSection.classList.remove('hidden');
+            this.state.currentSection = 'info';
         }
     }
 
-    updateDebug(section, progress, zoom) {
-        if (this.elements.debugInfo) {
-            document.getElementById('scrollPercent').textContent = Math.round(this.state.scrollPosition);
-            document.getElementById('zoomLevel').textContent = zoom;
-            document.getElementById('currentSection').textContent = section;
+    updateLayers(layerIndex, section) {
+        const stack = section === 'hero' ? this.heroStack : this.infoStack;
+        const layers = stack.querySelectorAll('.layer');
+
+        // Remove active from all layers
+        layers.forEach(layer => layer.classList.remove('active'));
+
+        // Add active to current layer
+        if (layerIndex < layers.length) {
+            layers[layerIndex].classList.add('active');
+        }
+    }
+
+    setActiveLayer(index, section) {
+        this.updateSectionVisibility(section);
+        this.updateLayers(index, section);
+    }
+
+    updateDebug(totalLayer, sectionLayer, section, zoom) {
+        if (this.debugInfo) {
+            document.getElementById('scrollPos').textContent = Math.round(this.state.scrollY);
+            document.getElementById('layerNum').textContent = sectionLayer + 1;
+            document.getElementById('zoomLevel').textContent = zoom.toFixed(2);
         }
     }
 }
 
-// Initialize
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     window.zoomScroll = new InfiniteZoomScroll();
 });
 
+// Fallback for cached pages
 if (document.readyState === 'interactive' || document.readyState === 'complete') {
     window.zoomScroll = new InfiniteZoomScroll();
 }
