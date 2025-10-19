@@ -7,8 +7,9 @@ const PORT = 8888;
 const PUBLIC_DIR = __dirname;
 
 const server = http.createServer((req, res) => {
-    // Parse URL
-    let filePath = path.join(PUBLIC_DIR, req.url === '/' ? 'index.html' : req.url);
+    // Parse URL and decode URI components (handles %20 for spaces, etc)
+    const decodedUrl = decodeURIComponent(req.url);
+    let filePath = path.join(PUBLIC_DIR, decodedUrl === '/' ? 'index.html' : decodedUrl);
 
     // Prevent directory traversal
     if (!filePath.startsWith(PUBLIC_DIR)) {
@@ -30,7 +31,7 @@ const server = http.createServer((req, res) => {
         }
 
         // Set content type
-        const ext = path.extname(filePath);
+        const ext = path.extname(filePath).toLowerCase();
         let contentType = 'text/plain';
         if (ext === '.html') contentType = 'text/html; charset=utf-8';
         else if (ext === '.js') contentType = 'application/javascript; charset=utf-8';

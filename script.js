@@ -29,16 +29,23 @@ class InfiniteZoomScroll {
     }
 
     init() {
-        // Set scroll container height
+        // Set scroll container height - much taller to enable proper scrolling
         const totalImages = this.heroImageIndices.length + this.infoImageIndices.length;
-        const pixelsPerImage = 150; // Scroll distance per image
-        this.elements.scrollContainer.style.height = (totalImages * pixelsPerImage * 2) + 'px';
+        const pixelsPerImage = 300; // Scroll distance per image (increased for better control)
+        const scrollHeight = totalImages * pixelsPerImage * 3; // Tripled for more scrolling room
+        this.elements.scrollContainer.style.height = scrollHeight + 'px';
 
-        // Show first image
+        // Show first image on load
         this.updateDisplay();
 
         // Bind scroll event
         window.addEventListener('scroll', () => this.onScroll());
+
+        // Log for debugging
+        console.log(`✅ Zoom Scroll initialized`);
+        console.log(`  - Total images: ${totalImages}`);
+        console.log(`  - Scroll height: ${scrollHeight}px`);
+        console.log(`  - Pixels per image: ${pixelsPerImage}px`);
     }
 
     onScroll() {
@@ -47,7 +54,7 @@ class InfiniteZoomScroll {
     }
 
     updateDisplay() {
-        const pixelsPerImage = 150;
+        const pixelsPerImage = 300; // Must match init()
         const scrollProgress = this.state.scrollPosition / pixelsPerImage;
 
         // Total hero images
