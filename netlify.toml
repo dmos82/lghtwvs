@@ -1,9 +1,9 @@
 [build]
   command = "echo 'Building site...'"
   publish = "."
-  environment = { NODE_VERSION = "18.13.0" }
 
 [build.environment]
+  NODE_VERSION = "18.13.0"
   NODE_ENV = "production"
 
 [[redirects]]
@@ -22,7 +22,7 @@
   for = "/INFO/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
-    Content-Type = "image/tiff"
+    Content-Type = "image/png"
 
 [[headers]]
   for = "/"
