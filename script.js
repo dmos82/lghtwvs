@@ -115,10 +115,12 @@ class InfiniteZoomScroll {
             const heroScroll = this.state.scrollPosition;
             const heroImageProgress = heroScroll / scrollPerImage;
 
-            this.state.heroImageIndex = Math.min(
-                this.config.heroImages,
-                Math.max(1, Math.ceil(heroImageProgress))
+            // Map to actual hero image array index (0-8 maps to actual images)
+            const imageArrayIndex = Math.min(
+                this.heroImageIndices.length - 1,
+                Math.max(0, Math.floor(heroImageProgress))
             );
+            this.state.heroImageIndex = imageArrayIndex + 1; // 1-9 for display
             this.state.heroProgress = heroImageProgress;
 
             this.updateHeroSection(heroImageProgress);
@@ -148,9 +150,10 @@ class InfiniteZoomScroll {
         this.elements.heroSection.classList.add('active');
         this.elements.infoSection.classList.remove('active');
 
-        // Update image - use actual image indices
-        const actualIndex = this.heroImageIndices[Math.min(this.state.heroImageIndex - 1, this.heroImageIndices.length - 1)];
-        this.elements.heroImage.src = `HERO/lghtwvs ${actualIndex}.JPG`;
+        // Update image - use actual image indices from array
+        const arrayIndex = Math.min(Math.floor(progress), this.heroImageIndices.length - 1);
+        const actualImageNumber = this.heroImageIndices[arrayIndex];
+        this.elements.heroImage.src = `HERO/lghtwvs ${actualImageNumber}.JPG`;
 
         // Calculate zoom: 1x at image 1, scales up to image 11
         const zoomScale = 1 + (progress * 8); // Exponential zoom
