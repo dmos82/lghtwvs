@@ -468,11 +468,28 @@ body {
     .info-content h2 {
         font-size: 1.5rem;  /* Reduced from 2rem */
         margin-bottom: 0.5rem;  /* Reduced margin */
+        background: linear-gradient(135deg, #0f0 0%, #0ff 100%);  /* Match store button style */
+        -webkit-background-clip: unset;  /* Reset gradient text clipping */
+        -webkit-text-fill-color: unset;  /* Reset text fill */
+        background-clip: unset;
+        color: #000;  /* Black text on gradient */
+        padding: 0.6rem 1.5rem;  /* Add padding for background */
+        clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);  /* Angled edges like store button */
+        filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.8));  /* Keep glow effect */
+        animation: glitch 3s infinite;  /* Keep glitch animation */
     }
 
     .bio {
         font-size: 0.85rem;  /* Smaller bio text */
         margin-bottom: 1rem;  /* Reduced margin */
+        background: linear-gradient(135deg, #0f0 0%, #0ff 100%);  /* Match store button style */
+        color: #000;  /* Black text on gradient */
+        padding: 0.5rem 1rem;  /* Add padding for background */
+        clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);  /* Subtle angled edges */
+        text-shadow: none;  /* Remove cyan text shadow for better readability */
+        font-weight: 500;  /* Slightly bolder for contrast */
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.4),
+                    0 0 30px rgba(0, 255, 255, 0.3);  /* Add glow like store button */
     }
 
     .links-section {
