@@ -70,6 +70,10 @@ body {
     -webkit-backface-visibility: hidden;
 }
 
+/* lghtwvs 11 - make larger to show as top/bottom borders */
+.hero-layer:nth-child(1) {
+    max-height: 100vh;
+}
 
 /* Overlay text */
 .overlay {
