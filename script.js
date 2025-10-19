@@ -15,10 +15,22 @@ class ZoomScroll {
         this.infoLayers = document.querySelectorAll('.info-layer');
         this.allLayers = document.querySelectorAll('.hero-layer, .info-layer');
 
+        // Pre-cache layer data for performance
+        this.layerData = Array.from(this.allLayers).map(layer => ({
+            element: layer,
+            section: layer.dataset.section,
+            speed: parseFloat(layer.dataset.speed) || 1,
+            isLayer9: layer.alt === 'Layer 9'
+        }));
+
         // Scroll settings
         this.scrollHeight = 8000; // Total scrollable height (increased for INFO section)
         this.minZoom = 1; // Starting zoom level
         this.maxZoom = 10; // Maximum zoom level
+
+        // Performance flags
+        this.lastBaseZoom = 0;
+        this.lastScrollProgress = 0;
 
         this.init();
     }
@@ -73,58 +85,79 @@ class ZoomScroll {
         const overlayThreshold = 3;
         const overlayVisible = baseZoom > overlayThreshold;
 
-        // Apply different zoom speeds to each layer (parallax effect)
-        this.allLayers.forEach(layer => {
-            const section = layer.dataset.section;
-            const speed = parseFloat(layer.dataset.speed) || 1;
+        // Cache transform strings to avoid recreating them
+        const transforms = new Map();
+
+        // Process layers in a single pass with optimized loops using cached data
+        for (let i = 0; i < this.layerData.length; i++) {
+            const { element: layer, section, speed, isLayer9 } = this.layerData[i];
             const layerZoom = 1 + ((baseZoom - 1) * speed);
 
             // HERO section - always visible, zooms normally
             if (section === 'hero') {
-                layer.style.display = 'block';
-                layer.style.transform = `translate3d(-50%, -50%, 0) scale(${layerZoom})`;
-                layer.style.opacity = '1';
+                // Only update transform if it changed
+                const transformKey = `${layerZoom.toFixed(3)}`;
+                if (!transforms.has(transformKey)) {
+                    transforms.set(transformKey, `translate3d(-50%, -50%, 0) scale(${layerZoom})`);
+                }
 
-                // Fade out image 9 as we scroll (reveal image 11 behind it)
-                if (layer.alt === 'Layer 9') {
+                // Use cached transform
+                layer.style.transform = transforms.get(transformKey);
+
+                // Special handling for layer 9 fade
+                if (isLayer9) {
                     const fadeStart = 0;
                     const fadeEnd = 0.06;
 
+                    let opacity;
                     if (scrollProgress < fadeStart) {
-                        layer.style.opacity = '1';
+                        opacity = 1;
                     } else if (scrollProgress > fadeEnd) {
-                        layer.style.opacity = '0';
+                        opacity = 0;
                     } else {
                         const fadeProgress = (scrollProgress - fadeStart) / (fadeEnd - fadeStart);
-                        layer.style.opacity = (1 - fadeProgress).toString();
+                        opacity = 1 - fadeProgress;
                     }
+
+                    // Only update if opacity changed significantly
+                    const currentOpacity = parseFloat(layer.style.opacity);
+                    if (Math.abs(currentOpacity - opacity) > 0.01) {
+                        layer.style.opacity = opacity.toString();
+                    }
+                } else if (layer.style.opacity !== '1') {
+                    layer.style.opacity = '1';
                 }
             }
 
             // INFO section - appears as tiny dot when overlay shows, then zooms at same speed as HERO
-            if (section === 'info') {
+            else if (section === 'info') {
                 // Only show INFO after overlay appears (when zoom > 3, around 33% scroll)
                 if (overlayVisible) {
-                    layer.style.display = 'block';
+                    if (layer.style.display !== 'block') {
+                        layer.style.display = 'block';
+                    }
 
                     // Calculate how much we've scrolled since overlay appeared
                     const overlayStart = 0.33; // When baseZoom hits 3
                     const progressSinceOverlay = Math.max(0, scrollProgress - overlayStart);
 
                     // INFO starts tiny (0.01x) and accelerates growth as we continue scrolling
-                    // Exponential growth so it eventually fills screen and surpasses HERO
                     const infoScaleStart = 0.01;
-                    const growthAcceleration = Math.pow(progressSinceOverlay * 10, 1.8); // Exponential acceleration
+                    const growthAcceleration = Math.pow(progressSinceOverlay * 10, 1.8);
                     const infoScale = infoScaleStart * (1 + growthAcceleration);
 
                     // Apply same parallax zoom as HERO, multiplied by INFO's growing scale
-                    layer.style.transform = `translate3d(-50%, -50%, 0) scale(${layerZoom * infoScale})`;
-                    layer.style.opacity = '1';
-                } else {
+                    const finalScale = layerZoom * infoScale;
+                    layer.style.transform = `translate3d(-50%, -50%, 0) scale(${finalScale})`;
+
+                    if (layer.style.opacity !== '1') {
+                        layer.style.opacity = '1';
+                    }
+                } else if (layer.style.display !== 'none') {
                     layer.style.display = 'none';
                 }
             }
-        });
+        }
 
         // Show overlay when zoomed in significantly
         if (overlayVisible) {

@@ -49,8 +49,8 @@ body {
     justify-content: center;
     transform-origin: center center;
     transform: scale(1);
-    will-change: transform;
-    transition: transform 0.1s ease-out;
+    will-change: auto; /* Let browser decide when to optimize */
+    /* Removed transition - causes jank during scroll */
 }
 
 /* Each hero layer image - all stacked on top of each other */
@@ -64,16 +64,20 @@ body {
     width: auto;
     height: auto;
     object-fit: contain;
-    will-change: transform;
-    transform: translate3d(-50%, -50%, 0);
+    will-change: transform, opacity;
+    transform: translate3d(-50%, -50%, 0) scale(1);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    transform-style: preserve-3d;
+    contain: layout style paint;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
 }
 
-/* lghtwvs 11 - fill entire viewport */
+/* lghtwvs 11 - true square that fills viewport */
 .hero-layer:nth-child(1) {
-    width: 100vw;
-    height: 100vh;
+    width: max(100vw, 100vh);
+    height: max(100vw, 100vh);
     max-width: none;
     max-height: none;
     object-fit: cover;
@@ -88,7 +92,8 @@ body {
 
 /* lghtwvs 8 - positioned at bottom to hide cut-off legs */
 .hero-layer:nth-child(3) {
-    transform: translate3d(-50%, 50%, 0);
+    top: 60%;
+    transform: translate3d(-50%, -50%, 0) scale(1);
 }
 
 /* Overlay text */
@@ -373,6 +378,24 @@ body {
 
 .debug-info div {
     margin: 0.3rem 0;
+}
+
+/* Performance optimization for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .hero-layer,
+    .info-layer {
+        will-change: auto !important;
+    }
+
+    .viewport {
+        will-change: auto !important;
+    }
+
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 /* Responsive */
