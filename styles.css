@@ -418,26 +418,15 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-    /* Aggressive performance optimizations for mobile */
     .hero-layer,
     .info-layer {
         max-width: 95%;
         max-height: 95%;
-        will-change: auto !important; /* Let Safari manage this */
-        image-rendering: optimizeSpeed; /* Faster rendering on mobile */
     }
 
-    /* Disable some layers on mobile for better performance */
-    .hero-layer:nth-child(4),
-    .hero-layer:nth-child(5),
-    .hero-layer:nth-child(6) {
-        display: none; /* Hide middle layers on mobile to improve performance */
-    }
-
-    /* lghtwvs 8 - push further down on mobile to hide truncated legs */
+    /* lghtwvs 8 - push down on mobile to hide truncated legs */
     .hero-layer:nth-child(3) {
-        top: 75%; /* Push down more on mobile */
-        max-height: 80vh; /* Limit height to prevent excessive scaling */
+        top: 65%;
     }
 
     .overlay h1 {
