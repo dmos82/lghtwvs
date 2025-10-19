@@ -1,33 +1,30 @@
 // ========================================
 // INFINITE ZOOM SCROLL - Light Waves
-// Core scroll handling & zoom calculations
+// Fixed scroll-to-zoom implementation
 // ========================================
 
 class InfiniteZoomScroll {
     constructor() {
         // Configuration
         this.config = {
-            zoomMultiplier: 15, // How fast to zoom (higher = more dramatic)
-            transitionThreshold: 0.85, // When to start transitioning sections (0-1)
-            maxZoomLevel: 100, // Maximum zoom level before new section
-            imageQuality: true, // Load high-quality images
-            debug: true, // Show debug info
+            heroImages: 11,
+            infoImages: 7,
+            scrollPixelsPerImage: 200, // pixels of scroll per image transition
+            debug: true,
         };
 
         // State
         this.state = {
-            scrollHeight: 0,
             scrollPosition: 0,
-            currentZoomLevel: 1,
             currentSection: 'hero',
-            heroProgress: 0, // 0-1
-            infoProgress: 0, // 0-1
-            isTransitioning: false,
+            heroImageIndex: 1,
+            infoImageIndex: 1,
+            heroProgress: 0,
+            infoProgress: 0,
         };
 
         // DOM Elements
         this.elements = {
-            body: document.body,
             scrollContainer: document.querySelector('.scroll-container'),
             heroSection: document.getElementById('heroSection'),
             infoSection: document.getElementById('infoSection'),
@@ -41,101 +38,59 @@ class InfiniteZoomScroll {
             debugInfo: document.getElementById('debugInfo'),
         };
 
-        // Image cache
-        this.imageCache = {
-            hero: {},
-            info: {},
-        };
-
         this.init();
     }
 
-    /**
-     * Initialize the scroll system
-     */
     init() {
-        this.preloadImages();
         this.calculateScrollHeight();
+        this.preloadImages();
         this.bindEvents();
-        this.update();
 
-        // Hide loading indicator when images are ready
+        // Hide loading indicator
         setTimeout(() => {
-            this.elements.loadingIndicator.classList.add('hidden');
-        }, 1000);
+            if (this.elements.loadingIndicator) {
+                this.elements.loadingIndicator.classList.add('hidden');
+            }
+        }, 500);
     }
 
     /**
-     * Preload all images for smooth transitions
-     */
-    preloadImages() {
-        // Preload HERO images (1-11)
-        for (let i = 1; i <= 11; i++) {
-            const img = new Image();
-            img.src = `HERO/lghtwvs ${i}.JPG`;
-            this.imageCache.hero[i] = img.src;
-        }
-
-        // Preload INFO images (1-7)
-        for (let i = 1; i <= 7; i++) {
-            const img = new Image();
-            const num = i.toString().padStart(1, '0');
-            img.src = `INFO/LGHTWVS INFO ${num}.TIF`;
-            this.imageCache.info[i] = img.src;
-        }
-    }
-
-    /**
-     * Calculate total scroll height needed
-     * Hero: 11 images, Info: 7 images
-     * Total scroll depth determines zoom progression
+     * Calculate total scroll height
+     * Each image gets scrollPixelsPerImage to transition
      */
     calculateScrollHeight() {
-        // Each image gets proportional scroll height
-        // Total scroll = (11 + 7) * window height
-        const imagesCount = 11 + 7; // Hero + Info
-        this.state.scrollHeight = window.innerHeight * imagesCount * 2;
-        this.elements.scrollContainer.style.height = this.state.scrollHeight + 'px';
+        const totalImages = this.config.heroImages + this.config.infoImages;
+        const scrollHeight = totalImages * this.config.scrollPixelsPerImage * 3;
+        this.elements.scrollContainer.style.height = scrollHeight + 'px';
     }
 
     /**
-     * Bind scroll and resize events
+     * Preload all images
+     */
+    preloadImages() {
+        // Preload HERO images
+        for (let i = 1; i <= this.config.heroImages; i++) {
+            const img = new Image();
+            img.src = `HERO/lghtwvs ${i}.JPG`;
+        }
+
+        // Preload INFO images
+        for (let i = 1; i <= this.config.infoImages; i++) {
+            const img = new Image();
+            img.src = `INFO/LGHTWVS INFO ${i}.TIF`;
+        }
+    }
+
+    /**
+     * Bind events
      */
     bindEvents() {
-        window.addEventListener('wheel', (e) => this.handleWheel(e), { passive: false });
         window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-        window.addEventListener('resize', () => this.onResize());
-
-        // Touch support
-        let touchStart = 0;
-        window.addEventListener('touchstart', (e) => {
-            touchStart = e.touches[0].clientY;
-        });
-        window.addEventListener('touchmove', (e) => {
-            const touchEnd = e.touches[0].clientY;
-            const delta = touchEnd - touchStart;
-            window.scrollBy(0, -delta * 0.5);
-            touchStart = touchEnd;
-        }, { passive: false });
+        window.addEventListener('resize', () => this.calculateScrollHeight());
     }
 
     /**
-     * Handle mouse wheel - prevent default scroll, use custom zoom
-     */
-    handleWheel(e) {
-        e.preventDefault();
-
-        // Calculate scroll speed based on wheel delta
-        const scrollSpeed = 1.5;
-        const newScrollPos = window.scrollY + (e.deltaY * scrollSpeed);
-
-        // Clamp to valid range
-        const maxScroll = this.state.scrollHeight - window.innerHeight;
-        window.scrollY = Math.max(0, Math.min(newScrollPos, maxScroll));
-    }
-
-    /**
-     * Main scroll event handler
+     * Main scroll handler
      */
     onScroll() {
         this.state.scrollPosition = window.scrollY;
@@ -143,67 +98,64 @@ class InfiniteZoomScroll {
     }
 
     /**
-     * Handle window resize
-     */
-    onResize() {
-        this.calculateScrollHeight();
-    }
-
-    /**
-     * Main update loop - recalculate zoom and image position
+     * Update zoom and images based on scroll
      */
     update() {
-        // Calculate progress (0-1) through entire scroll
-        const maxScroll = this.state.scrollHeight - window.innerHeight;
-        const totalProgress = Math.min(1, this.state.scrollPosition / maxScroll);
+        const scrollPerImage = this.config.scrollPixelsPerImage;
 
-        // Divide progress between Hero (60%) and Info (40%)
-        const heroEndProgress = 0.6;
+        // Calculate which image we're on
+        const heroTotalScroll = this.config.heroImages * scrollPerImage;
 
-        if (totalProgress < heroEndProgress) {
+        if (this.state.scrollPosition < heroTotalScroll) {
             // HERO SECTION
             this.state.currentSection = 'hero';
-            this.state.heroProgress = totalProgress / heroEndProgress; // 0-1
-            this.updateHeroSection(this.state.heroProgress);
+            const heroScroll = this.state.scrollPosition;
+            const heroImageProgress = heroScroll / scrollPerImage;
+
+            this.state.heroImageIndex = Math.min(
+                this.config.heroImages,
+                Math.max(1, Math.ceil(heroImageProgress))
+            );
+            this.state.heroProgress = heroImageProgress;
+
+            this.updateHeroSection(heroImageProgress);
         } else {
             // INFO SECTION
             this.state.currentSection = 'info';
-            const infoStart = heroEndProgress;
-            this.state.infoProgress = (totalProgress - infoStart) / (1 - infoStart); // 0-1
-            this.updateInfoSection(this.state.infoProgress);
+            const infoScroll = this.state.scrollPosition - heroTotalScroll;
+            const infoImageProgress = infoScroll / scrollPerImage;
+
+            this.state.infoImageIndex = Math.min(
+                this.config.infoImages,
+                Math.max(1, Math.ceil(infoImageProgress))
+            );
+            this.state.infoProgress = infoImageProgress;
+
+            this.updateInfoSection(infoImageProgress);
         }
 
-        // Update debug display
-        this.updateDebug(totalProgress);
+        this.updateDebug();
     }
 
     /**
-     * Update HERO section - zoom and image swapping
-     * Progress: 0 (start at image 1) → 1 (end at image 11)
+     * Update HERO section
      */
     updateHeroSection(progress) {
-        // Make HERO section active
+        // Show hero, hide info
         this.elements.heroSection.classList.add('active');
         this.elements.infoSection.classList.remove('active');
 
-        // Determine which image to display (1-11)
-        const imageIndex = Math.min(11, Math.max(1, Math.ceil(progress * 11)));
-        const imagePath = `HERO/lghtwvs ${imageIndex}.JPG`;
+        // Update image
+        const imageIndex = this.state.heroImageIndex;
+        this.elements.heroImage.src = `HERO/lghtwvs ${imageIndex}.JPG`;
 
-        if (this.elements.heroImage.src !== imagePath) {
-            this.elements.heroImage.src = imagePath;
-        }
+        // Calculate zoom: 1x at image 1, scales up to image 11
+        const zoomScale = 1 + (progress * 8); // Exponential zoom
 
-        // Calculate zoom level
-        // Start at 1x, scale up to maxZoom
-        const zoomLevel = 1 + (progress * (this.config.maxZoomLevel - 1));
-        this.state.currentZoomLevel = zoomLevel;
+        // Apply transform
+        this.applyZoom(this.elements.heroLayer, zoomScale, progress);
 
-        // Apply zoom transform with smooth easing
-        const scale = Math.pow(zoomLevel, 0.6); // Curved progression for natural feel
-        this.applyZoomTransform(this.elements.heroLayer, scale, progress);
-
-        // Show overlay when almost zoomed in
+        // Show overlay when zoomed
         if (progress > 0.7) {
             this.elements.heroOverlay.classList.add('visible');
         } else {
@@ -212,32 +164,24 @@ class InfiniteZoomScroll {
     }
 
     /**
-     * Update INFO section - zoom and image swapping
-     * Progress: 0 (start at image 1) → 1 (end at image 7)
+     * Update INFO section
      */
     updateInfoSection(progress) {
-        // Make INFO section active
+        // Show info, hide hero
         this.elements.infoSection.classList.add('active');
         this.elements.heroSection.classList.remove('active');
 
-        // Determine which image to display (1-7)
-        const imageIndex = Math.min(7, Math.max(1, Math.ceil(progress * 7)));
-        const infoNum = imageIndex.toString().padStart(1, '0');
-        const imagePath = `INFO/LGHTWVS INFO ${infoNum}.TIF`;
+        // Update image
+        const imageIndex = this.state.infoImageIndex;
+        this.elements.infoImage.src = `INFO/LGHTWVS INFO ${imageIndex}.TIF`;
 
-        if (this.elements.infoImage.src !== imagePath) {
-            this.elements.infoImage.src = imagePath;
-        }
+        // Calculate zoom
+        const zoomScale = 1 + (progress * 8);
 
-        // Calculate zoom level (same as hero for consistency)
-        const zoomLevel = 1 + (progress * (this.config.maxZoomLevel - 1));
-        this.state.currentZoomLevel = zoomLevel;
+        // Apply transform
+        this.applyZoom(this.elements.infoLayer, zoomScale, progress);
 
-        // Apply zoom transform
-        const scale = Math.pow(zoomLevel, 0.6);
-        this.applyZoomTransform(this.elements.infoLayer, scale, progress);
-
-        // Show overlay when almost zoomed in
+        // Show overlay when zoomed
         if (progress > 0.7) {
             this.elements.infoOverlay.classList.add('visible');
         } else {
@@ -246,45 +190,29 @@ class InfiniteZoomScroll {
     }
 
     /**
-     * Apply zoom transform to zoom layer
-     * Creates the infinite zoom effect by scaling and translating
+     * Apply zoom transform
      */
-    applyZoomTransform(layer, scale, progress) {
-        // Calculate subtle parallax offset based on progress
-        const offsetX = Math.sin(progress * Math.PI) * 5; // -5 to +5%
-        const offsetY = Math.cos(progress * Math.PI) * 5; // -5 to +5%
+    applyZoom(layer, scale, progress) {
+        // Smooth easing
+        const easedScale = Math.pow(scale, 0.85);
 
-        // Apply transform: scale + subtle position shift
-        layer.style.transform = `
-            translate(-50%, -50%)
-            scale(${scale})
-            translate(${offsetX}%, ${offsetY}%)
-        `;
-
-        // Optional: Add slight rotation for more dynamic feel
-        const rotation = Math.sin(progress * Math.PI * 2) * 0.5;
-        layer.style.filter = `brightness(${0.9 + progress * 0.1})`;
+        layer.style.transform = `scale(${easedScale})`;
+        layer.style.filter = `brightness(${0.85 + progress * 0.15})`;
     }
 
     /**
-     * Update debug info display
+     * Update debug display
      */
-    updateDebug(totalProgress) {
+    updateDebug() {
         if (!this.config.debug || !this.elements.debugInfo) return;
 
-        document.getElementById('scrollPercent').textContent =
-            Math.round(totalProgress * 100);
+        const scrollPercent = Math.round((this.state.scrollPosition / document.querySelector('.scroll-container').offsetHeight) * 100);
 
-        document.getElementById('zoomLevel').textContent =
-            this.state.currentZoomLevel.toFixed(1);
-
-        document.getElementById('currentSection').textContent =
-            this.state.currentSection.toUpperCase();
+        document.getElementById('scrollPercent').textContent = scrollPercent;
+        document.getElementById('zoomLevel').textContent = (this.state.currentSection === 'hero' ? this.state.heroProgress : this.state.infoProgress).toFixed(2);
+        document.getElementById('currentSection').textContent = this.state.currentSection === 'hero' ? `HERO (${this.state.heroImageIndex}/11)` : `INFO (${this.state.infoImageIndex}/7)`;
     }
 
-    /**
-     * Disable debug info
-     */
     disableDebug() {
         this.config.debug = false;
         if (this.elements.debugInfo) {
@@ -298,7 +226,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.zoomScroll = new InfiniteZoomScroll();
 });
 
-// Fallback for if script loads after DOM
 if (document.readyState === 'interactive' || document.readyState === 'complete') {
     window.zoomScroll = new InfiniteZoomScroll();
 }
