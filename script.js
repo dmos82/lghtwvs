@@ -82,7 +82,7 @@ class ZoomScroll {
 
         console.log('✅ Zoom Scroll initialized');
         console.log(`   Scroll height: ${this.scrollHeight}px (reduced for faster response)`);
-        console.log(`   Zoom range: ${this.minZoom}x - 6x (stops at 50% scroll)`);
+        console.log(`   Zoom range: ${this.minZoom}x - 6x (stops at 45% scroll)`);
         console.log(`   Mobile starts at 15% zoom`);
         console.log(`   HERO layers: ${this.heroLayers.length} (reduced from 8 to 6 with merged images)`);
         console.log(`   INFO layers: ${this.infoLayers.length} (optimized with caching)`);
@@ -93,8 +93,8 @@ class ZoomScroll {
         const scrollY = window.scrollY;
         const scrollProgress = scrollY / this.scrollHeight; // 0 to 1
 
-        // Cap zoom at 50% scroll (when DAVID MORIN disappears)
-        const zoomCutoff = 0.50;
+        // Cap zoom at 45% scroll (as DAVID MORIN starts to leave)
+        const zoomCutoff = 0.45;
         const cappedScrollProgress = Math.min(scrollProgress, zoomCutoff);
 
         // Calculate base zoom level - start mobile at 15% progress (zoom ~2.35)
@@ -104,10 +104,10 @@ class ZoomScroll {
             effectiveProgress = 0.15 + (cappedScrollProgress * 0.85);
         }
 
-        // Zoom progresses from 0-50% scroll, then stays constant
-        // Scale to make zoom reach ~6x at 50% scroll (instead of 10x at 100%)
+        // Zoom progresses from 0-45% scroll, then stays constant
+        // Scale to make zoom reach ~6x at 45% scroll (instead of 10x at 100%)
         const maxZoomAtCutoff = 6;
-        const baseZoom = this.minZoom + (effectiveProgress * 2 * (maxZoomAtCutoff - this.minZoom));
+        const baseZoom = this.minZoom + (effectiveProgress * 2.22 * (maxZoomAtCutoff - this.minZoom));
 
         // Show overlay when zoomed in (around 33% scroll is when baseZoom hits ~3)
         const overlayThreshold = 3;
