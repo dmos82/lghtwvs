@@ -95,9 +95,28 @@ body {
     font-size: clamp(2rem, 8vw, 5rem);
     font-weight: 700;
     letter-spacing: 0.1em;
-    margin-bottom: 0.5rem;
+    margin-bottom: 2rem;  /* Increased from 0.5rem to create more space before LIGHT WAVES */
     text-transform: uppercase;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    gap: 2em;  /* Space between DAVID and MORIN */
+}
+
+/* Name parts for curtain effect */
+.name-part {
+    display: inline-block;
+    transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    will-change: transform;
+}
+
+/* Curtain effect when info panel opens */
+.overlay.curtain-open .name-left {
+    transform: translateX(-200vw);  /* Slide DAVID off to the left */
+}
+
+.overlay.curtain-open .name-right {
+    transform: translateX(200vw);  /* Slide MORIN off to the right */
 }
 
 .overlay .subtitle {
@@ -126,6 +145,27 @@ body {
     pointer-events: auto;
 }
 
+/* Spinning LP Record */
+.spinning-lp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 700px;
+    max-width: 90vw;
+    max-height: 90vw;
+    z-index: 0;
+    animation: spinRecord 4s linear infinite;
+    filter: drop-shadow(0 0 40px rgba(0, 255, 0, 0.4))
+            drop-shadow(0 0 60px rgba(0, 255, 255, 0.3));
+}
+
+@keyframes spinRecord {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 .info-content {
     position: absolute;
     top: 50%;
@@ -134,39 +174,18 @@ body {
     width: 650px;
     height: 650px;
     padding: 4rem;
-    background: radial-gradient(circle, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.8) 100%);
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.7) 100%);
     border-radius: 50%;
-    border: 3px solid transparent;
-    background-clip: padding-box;
-    box-shadow:
-        0 0 60px rgba(0, 255, 0, 0.4),
-        0 0 100px rgba(0, 255, 255, 0.2),
-        inset 0 0 80px rgba(0, 255, 0, 0.1);
     color: #fff;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     font-family: 'Rajdhani', sans-serif;
+    z-index: 1;  /* Above the spinning LP */
 }
 
-.info-content::before {
-    content: '';
-    position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #0ff 0%, #0f0 25%, #f0f 50%, #0ff 75%, #0f0 100%);
-    z-index: -1;
-    animation: rotateBorder 4s linear infinite;
-}
-
-@keyframes rotateBorder {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+/* Old animated border removed - replaced with spinning LP record */
 
 .info-content h2 {
     font-family: 'Orbitron', monospace;
@@ -345,6 +364,17 @@ body {
 
     .overlay h1 {
         font-size: 2.5rem;
+        gap: 1.5em;  /* Slightly less gap on mobile */
+        margin-bottom: 1.5rem;  /* Proportional spacing for mobile */
+    }
+
+    /* Curtain effect adjustments for mobile */
+    .overlay.curtain-open .name-left {
+        transform: translateX(-150vw);  /* Slightly less distance on mobile */
+    }
+
+    .overlay.curtain-open .name-right {
+        transform: translateX(150vw);  /* Slightly less distance on mobile */
     }
 
     .overlay .subtitle {
@@ -375,5 +405,12 @@ body {
     .store-button {
         padding: 1rem 2rem;
         font-size: 1rem;
+    }
+
+    .spinning-lp {
+        width: 90vw;
+        height: 90vw;
+        max-width: 500px;
+        max-height: 500px;
     }
 }

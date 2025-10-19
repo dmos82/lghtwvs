@@ -137,8 +137,12 @@ class ZoomScroll {
         const infoPanelThreshold = 0.60;
         if (scrollProgress > infoPanelThreshold) {
             this.infoPanel.classList.add('visible');
+            // Trigger curtain effect when info panel opens
+            this.overlay.classList.add('curtain-open');
         } else {
             this.infoPanel.classList.remove('visible');
+            // Reset curtain effect when scrolling back up
+            this.overlay.classList.remove('curtain-open');
         }
 
         // Update debug info
