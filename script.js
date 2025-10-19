@@ -5,13 +5,16 @@
 
 class InfiniteZoomScroll {
     constructor() {
-        // Configuration
+        // Configuration - Set actual image counts you have
         this.config = {
-            heroImages: 11,
-            infoImages: 7,
+            heroImages: 9,  // You have: 1,2,3,4,5,6,9,10,11 (9 total)
+            infoImages: 7,  // You have: 1-7 ✓
             scrollPixelsPerImage: 200, // pixels of scroll per image transition
             debug: true,
         };
+
+        // Actual hero image indices (accounting for missing 7, 8)
+        this.heroImageIndices = [1, 2, 3, 4, 5, 6, 9, 10, 11];
 
         // State
         this.state = {
@@ -145,9 +148,9 @@ class InfiniteZoomScroll {
         this.elements.heroSection.classList.add('active');
         this.elements.infoSection.classList.remove('active');
 
-        // Update image
-        const imageIndex = this.state.heroImageIndex;
-        this.elements.heroImage.src = `HERO/lghtwvs ${imageIndex}.JPG`;
+        // Update image - use actual image indices
+        const actualIndex = this.heroImageIndices[Math.min(this.state.heroImageIndex - 1, this.heroImageIndices.length - 1)];
+        this.elements.heroImage.src = `HERO/lghtwvs ${actualIndex}.JPG`;
 
         // Calculate zoom: 1x at image 1, scales up to image 11
         const zoomScale = 1 + (progress * 8); // Exponential zoom
@@ -210,7 +213,7 @@ class InfiniteZoomScroll {
 
         document.getElementById('scrollPercent').textContent = scrollPercent;
         document.getElementById('zoomLevel').textContent = (this.state.currentSection === 'hero' ? this.state.heroProgress : this.state.infoProgress).toFixed(2);
-        document.getElementById('currentSection').textContent = this.state.currentSection === 'hero' ? `HERO (${this.state.heroImageIndex}/11)` : `INFO (${this.state.infoImageIndex}/7)`;
+        document.getElementById('currentSection').textContent = this.state.currentSection === 'hero' ? `HERO (${this.state.heroImageIndex}/9)` : `INFO (${this.state.infoImageIndex}/7)`;
     }
 
     disableDebug() {
