@@ -10,6 +10,7 @@ class ZoomScroll {
         this.scrollContainer = document.querySelector('.scroll-container');
         this.overlay = document.getElementById('overlay');
         this.debugInfo = document.getElementById('debugInfo');
+        this.layers = document.querySelectorAll('.hero-layer');
 
         // Scroll settings
         this.scrollHeight = 5000; // Total scrollable height
@@ -32,27 +33,32 @@ class ZoomScroll {
         console.log('✅ Zoom Scroll initialized');
         console.log(`   Scroll height: ${this.scrollHeight}px`);
         console.log(`   Zoom range: ${this.minZoom}x - ${this.maxZoom}x`);
+        console.log(`   Layers with varying speeds: ${this.layers.length}`);
     }
 
     onScroll() {
         const scrollY = window.scrollY;
         const scrollProgress = scrollY / this.scrollHeight; // 0 to 1
 
-        // Calculate zoom level based on scroll position
-        const zoom = this.minZoom + (scrollProgress * (this.maxZoom - this.minZoom));
+        // Calculate base zoom level
+        const baseZoom = this.minZoom + (scrollProgress * (this.maxZoom - this.minZoom));
 
-        // Apply zoom transform to viewport (all images zoom together)
-        this.viewport.style.transform = `scale(${zoom})`;
+        // Apply different zoom speeds to each layer (parallax effect)
+        this.layers.forEach(layer => {
+            const speed = parseFloat(layer.dataset.speed) || 1;
+            const layerZoom = 1 + ((baseZoom - 1) * speed);
+            layer.style.transform = `translate(-50%, -50%) scale(${layerZoom})`;
+        });
 
         // Show overlay when zoomed in significantly
-        if (zoom > 3) {
+        if (baseZoom > 3) {
             this.overlay.classList.add('visible');
         } else {
             this.overlay.classList.remove('visible');
         }
 
         // Update debug info
-        this.updateDebug(scrollY, zoom);
+        this.updateDebug(scrollY, baseZoom);
     }
 
     updateDebug(scrollY, zoom) {
