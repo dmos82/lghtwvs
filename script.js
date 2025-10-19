@@ -80,12 +80,13 @@ class ZoomScroll {
 
         console.log('✅ Zoom Scroll initialized');
         console.log(`   Scroll height: ${this.scrollHeight}px (reduced for faster response)`);
-        console.log(`   Zoom range: ${this.minZoom}x - 6x (stops at 75% scroll)`);
+        console.log(`   Zoom range: ${this.minZoom}x - 6x (stops at 55% scroll)`);
         console.log(`   Mobile starts at 5% zoom (slight zoom for balance)`);
         console.log(`   HERO layers: ${this.heroLayers.length} (reduced from 8 to 6 with merged images)`);
-        console.log(`   INFO layers: ${this.infoLayers.length} (always visible, start microscopic)`);
+        console.log(`   INFO layers: ${this.infoLayers.length} (linear growth, balanced with HERO)`);
         console.log(`   Overlay text: Always visible (no fade-in lag)`);
-        console.log(`   Info panel & curtain: Appear at 35% scroll (15% earlier)`);
+        console.log(`   Info panel & curtain: Appear at 35% scroll`);
+        console.log(`   All scrolling stops at 55% (when spinning record fully appears)`);
         console.log(`   Press 'd' to toggle debug info`);
     }
 
@@ -93,8 +94,8 @@ class ZoomScroll {
         const scrollY = window.scrollY;
         const scrollProgress = scrollY / this.scrollHeight; // 0 to 1
 
-        // Cap zoom at 75% scroll (extended zoom range)
-        const zoomCutoff = 0.75;
+        // Cap zoom at 55% scroll (stop when spinning record fully appears)
+        const zoomCutoff = 0.55;
         const cappedScrollProgress = Math.min(scrollProgress, zoomCutoff);
 
         // Calculate base zoom level - start mobile at 5% progress (zoom ~1.45)
@@ -104,10 +105,10 @@ class ZoomScroll {
             effectiveProgress = 0.05 + (cappedScrollProgress * 0.95);
         }
 
-        // Zoom progresses from 0-75% scroll, then stays constant
-        // Scale to make zoom reach ~6x at 75% scroll
+        // Zoom progresses from 0-55% scroll, then stays constant
+        // Scale to make zoom reach ~6x at 55% scroll
         const maxZoomAtCutoff = 6;
-        const baseZoom = this.minZoom + (effectiveProgress * 1.33 * (maxZoomAtCutoff - this.minZoom));
+        const baseZoom = this.minZoom + (effectiveProgress * 1.82 * (maxZoomAtCutoff - this.minZoom));
 
         // Show overlay when zoomed in (around 33% scroll is when baseZoom hits ~3)
         const overlayThreshold = 3;
@@ -159,24 +160,19 @@ class ZoomScroll {
 
             // INFO section - always visible, starts microscopic and grows
             else if (section === 'info') {
-                // INFO starts at 0.001 scale and grows exponentially
-                // No visibility checks needed - always rendered
+                // INFO starts microscopic and grows linearly with scroll
+                // Balanced with HERO zoom for uniform speed
 
-                // Smooth exponential growth from start
-                // Start tiny, accelerate growth after 30% scroll
+                // Linear growth matching HERO zoom progression
                 const infoGrowthStart = 0.001;  // Microscopic start
-                const growthBoostPoint = 0.30;  // When to accelerate growth
 
-                let infoScale;
-                if (scrollProgress < growthBoostPoint) {
-                    // Slow growth at start (stays tiny)
-                    infoScale = infoGrowthStart + (scrollProgress * 0.01);
-                } else {
-                    // Exponential growth after 30%
-                    const boostedProgress = (scrollProgress - growthBoostPoint) / (1 - growthBoostPoint);
-                    const growthFactor = boostedProgress * 6;
-                    infoScale = 0.01 + (growthFactor * growthFactor * 0.4);
-                }
+                // Linear growth that matches HERO zoom rate
+                // Capped at 55% like HERO zoom
+                const cappedInfoProgress = Math.min(scrollProgress, 0.55);
+
+                // Simple linear scaling - grows from 0.001 to ~1 over 55% scroll
+                // This creates uniform movement with HERO layers
+                const infoScale = infoGrowthStart + (cappedInfoProgress * 1.8);
 
                 // Apply parallax zoom similar to HERO
                 const finalScale = Math.min(layerZoom * infoScale, 50);
