@@ -65,8 +65,13 @@ class ZoomScroll {
         window.addEventListener('scroll', scrollHandler, { passive: true });
         window.addEventListener('touchmove', scrollHandler, { passive: true });
 
-        // Initial update
-        this.onScroll();
+        // Initial update - start mobile at 25% zoom
+        if (this.isMobile) {
+            // Simulate initial scroll to get 25% zoom on mobile
+            this.onScroll();
+        } else {
+            this.onScroll();
+        }
 
         // Toggle debug info with 'd' key
         document.addEventListener('keydown', (e) => {
@@ -78,7 +83,8 @@ class ZoomScroll {
         console.log('✅ Zoom Scroll initialized');
         console.log(`   Scroll height: ${this.scrollHeight}px`);
         console.log(`   Zoom range: ${this.minZoom}x - ${this.maxZoom}x`);
-        console.log(`   HERO layers: ${this.heroLayers.length}`);
+        console.log(`   Mobile starts at 25% zoom`);
+        console.log(`   HERO layers: ${this.heroLayers.length} (reduced from 8 to 6 for performance)`);
         console.log(`   INFO layers: ${this.infoLayers.length}`);
         console.log(`   Press 'd' to toggle debug info`);
     }
@@ -87,8 +93,13 @@ class ZoomScroll {
         const scrollY = window.scrollY;
         const scrollProgress = scrollY / this.scrollHeight; // 0 to 1
 
-        // Calculate base zoom level
-        const baseZoom = this.minZoom + (scrollProgress * (this.maxZoom - this.minZoom));
+        // Calculate base zoom level - start mobile at 25% progress (zoom ~3.25)
+        let effectiveProgress = scrollProgress;
+        if (this.isMobile) {
+            // Start at 25% zoom on mobile
+            effectiveProgress = 0.25 + (scrollProgress * 0.75);
+        }
+        const baseZoom = this.minZoom + (effectiveProgress * (this.maxZoom - this.minZoom));
 
         // Show overlay when zoomed in (around 33% scroll is when baseZoom hits ~3)
         const overlayThreshold = 3;
