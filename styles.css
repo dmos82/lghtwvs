@@ -105,7 +105,7 @@ body {
     transform: translate3d(-50%, -50%, 0) scale(1);
 }
 
-/* Overlay text */
+/* Overlay text - always visible from start */
 .overlay {
     position: fixed;
     top: 0;
@@ -118,13 +118,14 @@ body {
     justify-content: center;
     z-index: 10;
     pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.6s ease;
+    opacity: 1;  /* Always visible */
+    /* Removed transition - no longer needed */
 }
 
+/* No longer needed - overlay always visible
 .overlay.visible {
     opacity: 1;
-}
+} */
 
 .overlay h1 {
     font-size: clamp(2rem, 8vw, 5rem);

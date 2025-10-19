@@ -84,6 +84,7 @@ class ZoomScroll {
         console.log(`   Mobile starts at 5% zoom (slight zoom for balance)`);
         console.log(`   HERO layers: ${this.heroLayers.length} (reduced from 8 to 6 with merged images)`);
         console.log(`   INFO layers: ${this.infoLayers.length} (always visible, start microscopic)`);
+        console.log(`   Overlay text: Always visible (no fade-in lag)`);
         console.log(`   Press 'd' to toggle debug info`);
     }
 
@@ -195,12 +196,8 @@ class ZoomScroll {
             }
         }
 
-        // Show overlay when zoomed in significantly
-        if (overlayVisible) {
-            this.overlay.classList.add('visible');
-        } else {
-            this.overlay.classList.remove('visible');
-        }
+        // Overlay is now always visible from start - no state changes needed
+        // The curtain effect still happens at the right time
 
         // Show info panel when INFO images have grown significantly (around 50% scroll)
         const infoPanelThreshold = 0.50; // Reduced from 0.60 to show spinning record earlier
