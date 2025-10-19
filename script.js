@@ -48,6 +48,22 @@ class ZoomScroll {
             const speed = parseFloat(layer.dataset.speed) || 1;
             const layerZoom = 1 + ((baseZoom - 1) * speed);
             layer.style.transform = `translate(-50%, -50%) scale(${layerZoom})`;
+
+            // Fade out image 9 as we scroll (reveal image 11 behind it)
+            if (layer.alt === 'Layer 9') {
+                // Start fading at 50% scroll progress, fully transparent by 80%
+                const fadeStart = 0.5;
+                const fadeEnd = 0.8;
+
+                if (scrollProgress < fadeStart) {
+                    layer.style.opacity = '1';
+                } else if (scrollProgress > fadeEnd) {
+                    layer.style.opacity = '0';
+                } else {
+                    const fadeProgress = (scrollProgress - fadeStart) / (fadeEnd - fadeStart);
+                    layer.style.opacity = (1 - fadeProgress).toString();
+                }
+            }
         });
 
         // Show overlay when zoomed in significantly
