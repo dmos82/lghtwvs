@@ -27,23 +27,22 @@ class ZoomScroll {
         // Set scroll container height
         this.scrollContainer.style.height = this.scrollHeight + 'px';
 
-        // Listen for scroll events
-        window.addEventListener('scroll', () => this.onScroll(), { passive: true });
+        // Use requestAnimationFrame for smooth 60fps updates
+        this.ticking = false;
+        this.lastScrollY = 0;
 
-        // Touch support for mobile/Telegram
-        let touchStartY = 0;
-        let currentScroll = 0;
+        // Listen for scroll events with RAF throttling
+        window.addEventListener('scroll', () => {
+            this.lastScrollY = window.scrollY;
 
-        document.body.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-            currentScroll = window.scrollY;
+            if (!this.ticking) {
+                window.requestAnimationFrame(() => {
+                    this.onScroll();
+                    this.ticking = false;
+                });
+                this.ticking = true;
+            }
         }, { passive: true });
-
-        document.body.addEventListener('touchmove', (e) => {
-            const touchY = e.touches[0].clientY;
-            const deltaY = touchStartY - touchY;
-            window.scrollTo(0, currentScroll + deltaY);
-        }, { passive: false });
 
         // Initial update
         this.onScroll();
@@ -83,7 +82,7 @@ class ZoomScroll {
             // HERO section - always visible, zooms normally
             if (section === 'hero') {
                 layer.style.display = 'block';
-                layer.style.transform = `translate(-50%, -50%) scale(${layerZoom})`;
+                layer.style.transform = `translate3d(-50%, -50%, 0) scale(${layerZoom})`;
                 layer.style.opacity = '1';
 
                 // Fade out image 9 as we scroll (reveal image 11 behind it)
@@ -119,7 +118,7 @@ class ZoomScroll {
                     const infoScale = infoScaleStart * (1 + growthAcceleration);
 
                     // Apply same parallax zoom as HERO, multiplied by INFO's growing scale
-                    layer.style.transform = `translate(-50%, -50%) scale(${layerZoom * infoScale})`;
+                    layer.style.transform = `translate3d(-50%, -50%, 0) scale(${layerZoom * infoScale})`;
                     layer.style.opacity = '1';
                 } else {
                     layer.style.display = 'none';
