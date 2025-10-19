@@ -71,10 +71,10 @@ class InfiniteZoomScroll {
      * Preload all images
      */
     preloadImages() {
-        // Preload HERO images
-        for (let i = 1; i <= this.config.heroImages; i++) {
+        // Preload HERO images - only the ones that exist
+        for (const imageNum of this.heroImageIndices) {
             const img = new Image();
-            img.src = `HERO/lghtwvs ${i}.JPG`;
+            img.src = `HERO/lghtwvs ${imageNum}.JPG`;
         }
 
         // Preload INFO images
