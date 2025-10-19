@@ -9,6 +9,7 @@ class ZoomScroll {
         this.viewport = document.getElementById('viewport');
         this.scrollContainer = document.querySelector('.scroll-container');
         this.overlay = document.getElementById('overlay');
+        this.infoPanel = document.getElementById('infoPanel');
         this.debugInfo = document.getElementById('debugInfo');
         this.heroLayers = document.querySelectorAll('.hero-layer');
         this.infoLayers = document.querySelectorAll('.info-layer');
@@ -32,11 +33,19 @@ class ZoomScroll {
         // Initial update
         this.onScroll();
 
+        // Toggle debug info with 'd' key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'd' || e.key === 'D') {
+                this.debugInfo.classList.toggle('visible');
+            }
+        });
+
         console.log('✅ Zoom Scroll initialized');
         console.log(`   Scroll height: ${this.scrollHeight}px`);
         console.log(`   Zoom range: ${this.minZoom}x - ${this.maxZoom}x`);
         console.log(`   HERO layers: ${this.heroLayers.length}`);
         console.log(`   INFO layers: ${this.infoLayers.length}`);
+        console.log(`   Press 'd' to toggle debug info`);
     }
 
     onScroll() {
@@ -46,8 +55,9 @@ class ZoomScroll {
         // Calculate base zoom level
         const baseZoom = this.minZoom + (scrollProgress * (this.maxZoom - this.minZoom));
 
-        // Determine which section we're in (HERO for first 50%, INFO for last 50%)
-        const inInfoSection = scrollProgress > 0.5;
+        // Show overlay when zoomed in (around 33% scroll is when baseZoom hits ~3)
+        const overlayThreshold = 3;
+        const overlayVisible = baseZoom > overlayThreshold;
 
         // Apply different zoom speeds to each layer (parallax effect)
         this.allLayers.forEach(layer => {
@@ -55,36 +65,66 @@ class ZoomScroll {
             const speed = parseFloat(layer.dataset.speed) || 1;
             const layerZoom = 1 + ((baseZoom - 1) * speed);
 
-            // Show/hide based on section
-            if ((section === 'hero' && !inInfoSection) || (section === 'info' && inInfoSection)) {
+            // HERO section - always visible, zooms normally
+            if (section === 'hero') {
                 layer.style.display = 'block';
                 layer.style.transform = `translate(-50%, -50%) scale(${layerZoom})`;
-            } else {
-                layer.style.display = 'none';
+                layer.style.opacity = '1';
+
+                // Fade out image 9 as we scroll (reveal image 11 behind it)
+                if (layer.alt === 'Layer 9') {
+                    const fadeStart = 0;
+                    const fadeEnd = 0.06;
+
+                    if (scrollProgress < fadeStart) {
+                        layer.style.opacity = '1';
+                    } else if (scrollProgress > fadeEnd) {
+                        layer.style.opacity = '0';
+                    } else {
+                        const fadeProgress = (scrollProgress - fadeStart) / (fadeEnd - fadeStart);
+                        layer.style.opacity = (1 - fadeProgress).toString();
+                    }
+                }
             }
 
-            // Fade out image 9 as we scroll (reveal image 11 behind it)
-            if (layer.alt === 'Layer 9' && !inInfoSection) {
-                // Fade starts immediately at scroll position 0, fully transparent by 6%
-                const fadeStart = 0;
-                const fadeEnd = 0.06;
+            // INFO section - appears as tiny dot when overlay shows, then zooms at same speed as HERO
+            if (section === 'info') {
+                // Only show INFO after overlay appears (when zoom > 3, around 33% scroll)
+                if (overlayVisible) {
+                    layer.style.display = 'block';
 
-                if (scrollProgress < fadeStart) {
+                    // Calculate how much we've scrolled since overlay appeared
+                    const overlayStart = 0.33; // When baseZoom hits 3
+                    const progressSinceOverlay = Math.max(0, scrollProgress - overlayStart);
+
+                    // INFO starts tiny (0.01x) and accelerates growth as we continue scrolling
+                    // Exponential growth so it eventually fills screen and surpasses HERO
+                    const infoScaleStart = 0.01;
+                    const growthAcceleration = Math.pow(progressSinceOverlay * 10, 1.8); // Exponential acceleration
+                    const infoScale = infoScaleStart * (1 + growthAcceleration);
+
+                    // Apply same parallax zoom as HERO, multiplied by INFO's growing scale
+                    layer.style.transform = `translate(-50%, -50%) scale(${layerZoom * infoScale})`;
                     layer.style.opacity = '1';
-                } else if (scrollProgress > fadeEnd) {
-                    layer.style.opacity = '0';
                 } else {
-                    const fadeProgress = (scrollProgress - fadeStart) / (fadeEnd - fadeStart);
-                    layer.style.opacity = (1 - fadeProgress).toString();
+                    layer.style.display = 'none';
                 }
             }
         });
 
         // Show overlay when zoomed in significantly
-        if (baseZoom > 3) {
+        if (overlayVisible) {
             this.overlay.classList.add('visible');
         } else {
             this.overlay.classList.remove('visible');
+        }
+
+        // Show info panel when INFO images have grown significantly (around 60% scroll)
+        const infoPanelThreshold = 0.60;
+        if (scrollProgress > infoPanelThreshold) {
+            this.infoPanel.classList.add('visible');
+        } else {
+            this.infoPanel.classList.remove('visible');
         }
 
         // Update debug info

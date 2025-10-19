@@ -42,3 +42,11 @@ yarn-error.log*
 .netlify/
 .cache
 out/
+
+# Backups and source files
+*.backup
+*.TIF
+*.tif
+
+# WebP versions (optional - keep PNG for compatibility)
+*.webp
