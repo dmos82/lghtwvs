@@ -24,7 +24,7 @@ class ZoomScroll {
         }));
 
         // Scroll settings
-        this.scrollHeight = 5000; // Reduced for faster scroll response
+        this.scrollHeight = 4000; // Further reduced for quicker HERO scroll
         this.minZoom = 1; // Starting zoom level
         this.maxZoom = 10; // Maximum zoom level
 
@@ -165,8 +165,8 @@ class ZoomScroll {
                     // Simplified scaling - linear with slight acceleration, no complex Math.pow
                     const infoScaleStart = 0.01;
                     // Simpler quadratic growth instead of exponential
-                    const growthFactor = progressSinceOverlay * 8; // Reduced from 10
-                    const infoScale = infoScaleStart + (growthFactor * growthFactor * 0.5);
+                    const growthFactor = progressSinceOverlay * 5; // Reduced from 8 to slow down zoom
+                    const infoScale = infoScaleStart + (growthFactor * growthFactor * 0.3); // Also reduced multiplier from 0.5 to 0.3
 
                     // Apply same parallax zoom as HERO, multiplied by INFO's growing scale
                     // Cap maximum scale to prevent excessive rendering
@@ -203,8 +203,8 @@ class ZoomScroll {
             this.overlay.classList.remove('visible');
         }
 
-        // Show info panel when INFO images have grown significantly (around 60% scroll)
-        const infoPanelThreshold = 0.60;
+        // Show info panel when INFO images have grown significantly (around 50% scroll)
+        const infoPanelThreshold = 0.50; // Reduced from 0.60 to show spinning record earlier
         if (scrollProgress > infoPanelThreshold) {
             this.infoPanel.classList.add('visible');
             // Trigger curtain effect when info panel opens
