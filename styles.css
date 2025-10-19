@@ -76,6 +76,12 @@ body {
     -webkit-perspective: 1000px;
 }
 
+/* INFO layers start hidden for better performance */
+.info-layer {
+    visibility: hidden;
+    opacity: 0;
+}
+
 /* lghtwvs 11 - true square that fills viewport */
 .hero-layer:nth-child(1) {
     width: max(100vw, 100vh);

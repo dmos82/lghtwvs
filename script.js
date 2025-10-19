@@ -24,7 +24,7 @@ class ZoomScroll {
         }));
 
         // Scroll settings
-        this.scrollHeight = 8000; // Total scrollable height (increased for INFO section)
+        this.scrollHeight = 5000; // Reduced for faster scroll response
         this.minZoom = 1; // Starting zoom level
         this.maxZoom = 10; // Maximum zoom level
 
@@ -81,11 +81,11 @@ class ZoomScroll {
         });
 
         console.log('✅ Zoom Scroll initialized');
-        console.log(`   Scroll height: ${this.scrollHeight}px`);
+        console.log(`   Scroll height: ${this.scrollHeight}px (reduced for faster response)`);
         console.log(`   Zoom range: ${this.minZoom}x - ${this.maxZoom}x`);
         console.log(`   Mobile starts at 15% zoom`);
         console.log(`   HERO layers: ${this.heroLayers.length} (reduced from 8 to 6 with merged images)`);
-        console.log(`   INFO layers: ${this.infoLayers.length}`);
+        console.log(`   INFO layers: ${this.infoLayers.length} (optimized with caching)`);
         console.log(`   Press 'd' to toggle debug info`);
     }
 
@@ -153,28 +153,45 @@ class ZoomScroll {
             else if (section === 'info') {
                 // Only show INFO after overlay appears (when zoom > 3, around 33% scroll)
                 if (overlayVisible) {
-                    if (layer.style.display !== 'block') {
-                        layer.style.display = 'block';
+                    // Use visibility instead of display to avoid reflows
+                    if (layer.style.visibility !== 'visible') {
+                        layer.style.visibility = 'visible';
                     }
 
                     // Calculate how much we've scrolled since overlay appeared
                     const overlayStart = 0.33; // When baseZoom hits 3
                     const progressSinceOverlay = Math.max(0, scrollProgress - overlayStart);
 
-                    // INFO starts tiny (0.01x) and accelerates growth as we continue scrolling
+                    // Simplified scaling - linear with slight acceleration, no complex Math.pow
                     const infoScaleStart = 0.01;
-                    const growthAcceleration = Math.pow(progressSinceOverlay * 10, 1.8);
-                    const infoScale = infoScaleStart * (1 + growthAcceleration);
+                    // Simpler quadratic growth instead of exponential
+                    const growthFactor = progressSinceOverlay * 8; // Reduced from 10
+                    const infoScale = infoScaleStart + (growthFactor * growthFactor * 0.5);
 
                     // Apply same parallax zoom as HERO, multiplied by INFO's growing scale
-                    const finalScale = layerZoom * infoScale;
-                    layer.style.transform = `translate3d(-50%, -50%, 0) scale(${finalScale})`;
+                    // Cap maximum scale to prevent excessive rendering
+                    const finalScale = Math.min(layerZoom * infoScale, 50);
+
+                    // Round to 2 decimal places to reduce unique transforms
+                    const roundedScale = Math.round(finalScale * 100) / 100;
+
+                    // Cache the transform string
+                    const infoTransformKey = `info-${roundedScale}`;
+                    if (!transforms.has(infoTransformKey)) {
+                        transforms.set(infoTransformKey, `translate3d(-50%, -50%, 0) scale(${roundedScale})`);
+                    }
+
+                    layer.style.transform = transforms.get(infoTransformKey);
 
                     if (layer.style.opacity !== '1') {
                         layer.style.opacity = '1';
                     }
-                } else if (layer.style.display !== 'none') {
-                    layer.style.display = 'none';
+                } else {
+                    // Use visibility instead of display
+                    if (layer.style.visibility !== 'hidden') {
+                        layer.style.visibility = 'hidden';
+                        layer.style.opacity = '0';
+                    }
                 }
             }
         }
