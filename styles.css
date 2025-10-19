@@ -451,8 +451,8 @@ body {
     }
 
     .overlay .subtitle {
-        font-size: 0.78rem; /* Reduced by 35% from 1.2rem */
-        letter-spacing: 0.15em; /* Slightly tighter spacing for mobile */
+        font-size: 0.72rem; /* Reduced by 8% more from 0.78rem to prevent truncation */
+        letter-spacing: 0.14em; /* Slightly tighter spacing for mobile */
     }
 
     .info-content {
