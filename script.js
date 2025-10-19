@@ -65,9 +65,9 @@ class ZoomScroll {
         window.addEventListener('scroll', scrollHandler, { passive: true });
         window.addEventListener('touchmove', scrollHandler, { passive: true });
 
-        // Initial update - start mobile at 25% zoom
+        // Initial update - start mobile at 15% zoom
         if (this.isMobile) {
-            // Simulate initial scroll to get 25% zoom on mobile
+            // Simulate initial scroll to get 15% zoom on mobile
             this.onScroll();
         } else {
             this.onScroll();
@@ -83,8 +83,8 @@ class ZoomScroll {
         console.log('✅ Zoom Scroll initialized');
         console.log(`   Scroll height: ${this.scrollHeight}px`);
         console.log(`   Zoom range: ${this.minZoom}x - ${this.maxZoom}x`);
-        console.log(`   Mobile starts at 25% zoom`);
-        console.log(`   HERO layers: ${this.heroLayers.length} (reduced from 8 to 6 for performance)`);
+        console.log(`   Mobile starts at 15% zoom`);
+        console.log(`   HERO layers: ${this.heroLayers.length} (reduced from 8 to 6 with merged images)`);
         console.log(`   INFO layers: ${this.infoLayers.length}`);
         console.log(`   Press 'd' to toggle debug info`);
     }
@@ -93,11 +93,11 @@ class ZoomScroll {
         const scrollY = window.scrollY;
         const scrollProgress = scrollY / this.scrollHeight; // 0 to 1
 
-        // Calculate base zoom level - start mobile at 25% progress (zoom ~3.25)
+        // Calculate base zoom level - start mobile at 15% progress (zoom ~2.35)
         let effectiveProgress = scrollProgress;
         if (this.isMobile) {
-            // Start at 25% zoom on mobile
-            effectiveProgress = 0.25 + (scrollProgress * 0.75);
+            // Start at 15% zoom on mobile
+            effectiveProgress = 0.15 + (scrollProgress * 0.85);
         }
         const baseZoom = this.minZoom + (effectiveProgress * (this.maxZoom - this.minZoom));
 
