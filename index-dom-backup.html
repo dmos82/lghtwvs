@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>David Morin - Light Waves | Electronic Music Producer & Visual Artist</title>
+    <meta name="description" content="David Morin is an electronic music producer and visual artist exploring the intersection of sound and light. Listen on Spotify, Apple Music, and more.">
+    <meta name="author" content="David Morin">
+    <meta name="keywords" content="David Morin, Light Waves, LGHTWVS, electronic music, music producer, visual artist, vaporwave, cyberpunk">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lghtwvs.com/">
+    <meta property="og:title" content="David Morin - Light Waves">
+    <meta property="og:description" content="Electronic music producer and visual artist exploring the intersection of sound and light.">
+    <meta property="og:image" content="https://lghtwvs.com/LIGHTWAVES ALBUM COVER.JPG">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://lghtwvs.com/">
+    <meta name="twitter:title" content="David Morin - Light Waves">
+    <meta name="twitter:description" content="Electronic music producer and visual artist exploring the intersection of sound and light.">
+    <meta name="twitter:image" content="https://lghtwvs.com/LIGHTWAVES ALBUM COVER.JPG">
+    <meta name="twitter:site" content="@davidmorinmusic">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#000000">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Scroll container to enable scrolling -->
+    <div class="scroll-container"></div>
+
+    <!-- Viewport - all images zoom together here -->
+    <div class="viewport" id="viewport" role="img" aria-label="Interactive parallax artwork for Light Waves">
+        <!-- HERO images stacked - reduced to 6 layers with merged images for better performance -->
+        <img src="HERO/lghtwvs 11.JPG" alt="Light Waves album artwork - outermost visual layer with neon gradients" class="hero-layer" data-speed="1.8" data-section="hero">
+        <img src="HERO/lghtwvs 9.jpg" alt="Light Waves album artwork - cosmic wave pattern layer" class="hero-layer" data-speed="1.5" data-section="hero">
+        <img src="HERO/lghtwvs 8.png" alt="Light Waves album artwork - luminous energy field layer" class="hero-layer" data-speed="1.4" data-section="hero">
+        <img src="HERO/lghtwvs-4-5-merged.png" alt="Light Waves album artwork - merged layers 4 and 5" class="hero-layer" data-speed="0.95" data-section="hero">
+        <img src="HERO/lghtwvs-2-3-merged.png" alt="Light Waves album artwork - merged layers 2 and 3" class="hero-layer" data-speed="0.7" data-section="hero">
+        <img src="HERO/lghtwvs 1.png" alt="Light Waves album artwork - core base layer" class="hero-layer" data-speed="0.5" data-section="hero">
+
+        <!-- INFO images stacked in reverse order - speed increases with image number -->
+        <img src="INFO/LGHTWVS INFO 7.png" alt="Artist information panel - outermost cyberpunk visual layer" class="info-layer" data-speed="1.6" data-section="info">
+        <img src="INFO/center-image-circle.png" alt="Artist information panel - circular center artwork" class="info-layer" data-speed="1.0" data-section="info">
+    </div>
+
+    <!-- Overlay text -->
+    <div class="overlay" id="overlay">
+        <h1>
+            <span class="name-part name-left">DAVID</span>
+            <span class="name-part name-right">MORIN</span>
+        </h1>
+    </div>
+
+    <!-- Info panel - appears when INFO images grow -->
+    <div class="info-panel" id="infoPanel" role="dialog" aria-labelledby="artist-name">
+        <!-- Spinning LP record background -->
+        <img src="INFO/LGHTWVS LP.png" alt="LGHTWVS spinning vinyl record" class="spinning-lp">
+        <div class="info-content">
+            <img src="INFO/DAVID-MORIN-transparent.png" alt="DAVID MORIN" id="artist-name" class="artist-name-image">
+
+            <div class="bio">
+                <p>Producer, songwriter, rnb singer and Loop pedalist...</p>
+            </div>
+
+            <nav aria-label="Music platforms">
+                <div class="links-section">
+                    <h3>MUSIC</h3>
+                    <div class="links">
+                        <a href="https://open.spotify.com/artist/24kIGBNAXpwruRnnYjfN2p" target="_blank" rel="noopener noreferrer" aria-label="Listen to David Morin on Spotify">Spotify</a>
+                        <a href="https://music.apple.com/artist/davidmorinmusic" target="_blank" rel="noopener noreferrer" aria-label="Listen to David Morin on Apple Music">Apple Music</a>
+                        <a href="https://soundcloud.com/davidmorinmusic" target="_blank" rel="noopener noreferrer" aria-label="Listen to David Morin on SoundCloud">SoundCloud</a>
+                        <a href="https://davidmorinmusic.bandcamp.com" target="_blank" rel="noopener noreferrer" aria-label="Listen to David Morin on Bandcamp">Bandcamp</a>
+                    </div>
+                </div>
+            </nav>
+
+            <nav aria-label="Social media">
+                <div class="links-section">
+                    <h3>SOCIALS</h3>
+                    <div class="links">
+                        <a href="https://instagram.com/davidmorinmusic" target="_blank" rel="noopener noreferrer" aria-label="Follow David Morin on Instagram">Instagram</a>
+                        <a href="https://twitter.com/davidmorinmusic" target="_blank" rel="noopener noreferrer" aria-label="Follow David Morin on Twitter">Twitter</a>
+                        <a href="https://youtube.com/@davidmorinmusic" target="_blank" rel="noopener noreferrer" aria-label="Subscribe to David Morin on YouTube">YouTube</a>
+                        <a href="https://tiktok.com/@davidmorinmusic" target="_blank" rel="noopener noreferrer" aria-label="Follow David Morin on TikTok">TikTok</a>
+                    </div>
+                </div>
+            </nav>
+
+            <nav aria-label="Press and contact">
+                <div class="links-section">
+                    <h3>PRESS</h3>
+                    <div class="links">
+                        <a href="mailto:press@lghtwvs.com" aria-label="Email press inquiries">Press Contact</a>
+                        <a href="https://linktr.ee/davidmorin" target="_blank" rel="noopener noreferrer" aria-label="View David Morin's Linktree">Press Kit</a>
+                        <a href="mailto:davidmorinmusic@gmail.com" aria-label="Email David Morin directly">Email</a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="store-link">
+                <a href="store.html" class="store-button" aria-label="Visit the Light Waves merchandise store">
+                    LGHTWVS STORE
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debug info -->
+    <div class="debug-info" id="debugInfo">
+        <div>Scroll: <span id="scrollPos">0</span>px</div>
+        <div>Zoom: <span id="zoomLevel">1.00</span>x</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
