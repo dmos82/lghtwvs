@@ -16,14 +16,35 @@
         body {
             background: #000;
             overflow-x: hidden;
+            overflow-y: scroll;
             font-family: 'Orbitron', monospace;
             min-height: 100vh;
+            position: relative;
+        }
+
+        /* Scroll container for parallax */
+        .scroll-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 2500px; /* Create scrollable area */
+            pointer-events: none;
+        }
+
+        /* Viewport container */
+        .viewport {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Background image - layered */
+        /* Background layers - parallax enabled */
         .background {
             position: fixed;
             top: 0;
@@ -31,20 +52,29 @@
             width: 100%;
             height: 100%;
             z-index: 1;
+            pointer-events: none;
         }
 
         .bg-layer {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            max-width: 90%;
+            max-height: 90%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            will-change: transform;
+            transform: translate(-50%, -50%) scale(1);
         }
 
         .bg-layer-11 {
             z-index: 1;
+            width: max(100vw, 100vh);
+            height: max(100vw, 100vh);
+            max-width: none;
+            max-height: none;
+            object-fit: cover;
         }
 
         .bg-layer-1 {
@@ -52,24 +82,32 @@
         }
 
         .bg-layer-8 {
-            position: absolute;
+            position: fixed;
             bottom: -20%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) scale(0.75);
+            transform-origin: center bottom;
             width: auto;
             max-width: 90%;
             height: auto;
             z-index: 5;
+            will-change: transform;
         }
 
         /* Info Panel */
         .info-panel {
-            position: relative;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 90vw;
             height: 90vw;
             max-width: 500px;
             max-height: 500px;
             z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
         }
 
         .spinning-lp {
@@ -181,6 +219,9 @@
     </style>
 </head>
 <body>
+    <!-- Scroll container to enable scrolling -->
+    <div class="scroll-container"></div>
+
     <div class="background">
         <img src="HERO/lghtwvs 11.JPG" alt="Background" class="bg-layer bg-layer-11">
         <img src="HERO/lghtwvs 1.png" alt="Base layer" class="bg-layer bg-layer-1">
@@ -225,5 +266,64 @@
             <a href="store.html" class="link-button store-button">LGHTWVS STORE</a>
         </div>
     </div>
+
+    <script>
+        // Simple CSS-based parallax for in-app browsers
+        (function() {
+            const scrollHeight = 2500;
+            const minZoom = 1;
+            const maxZoom = 2.5;
+
+            const layer11 = document.querySelector('.bg-layer-11');
+            const layer1 = document.querySelector('.bg-layer-1');
+            const layer8 = document.querySelector('.bg-layer-8');
+            const infoPanel = document.querySelector('.info-panel');
+
+            function updateParallax() {
+                const scrollY = window.scrollY;
+                const scrollProgress = Math.min(1, scrollY / scrollHeight);
+
+                // Calculate zoom (1x to 2.5x)
+                const baseZoom = minZoom + (scrollProgress * (maxZoom - minZoom));
+
+                // Layer 11 (background) - slowest zoom
+                const zoom11 = 1 + ((baseZoom - 1) * 1.8);
+                layer11.style.transform = `translate(-50%, -50%) scale(${zoom11})`;
+
+                // Layer 1 (base) - medium zoom
+                const zoom1 = 1 + ((baseZoom - 1) * 0.5);
+                layer1.style.transform = `translate(-50%, -50%) scale(${zoom1})`;
+
+                // Layer 8 (figure) - zooms with parallax
+                const zoom8 = 1 + ((baseZoom - 1) * 1.4);
+                const scale8 = zoom8 * 0.75;
+                layer8.style.transform = `translateX(-50%) scale(${scale8})`;
+
+                // Show info panel after 30% scroll
+                if (scrollProgress > 0.30) {
+                    infoPanel.style.opacity = '1';
+                    infoPanel.style.pointerEvents = 'auto';
+                } else {
+                    infoPanel.style.opacity = '0';
+                    infoPanel.style.pointerEvents = 'none';
+                }
+            }
+
+            // Throttle scroll updates for performance
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        updateParallax();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+
+            // Initial update
+            updateParallax();
+        })();
+    </script>
 </body>
 </html>
