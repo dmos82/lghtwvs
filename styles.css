@@ -99,9 +99,11 @@ body {
     transform: translate3d(-50%, -50%, 0);
 }
 
-/* lghtwvs 8 - positioned at bottom to hide cut-off legs */
+/* lghtwvs 8 - positioned at bottom to hide cut-off legs (DESKTOP) */
 .hero-layer:nth-child(3) {
+    position: absolute;  /* Ensure absolute positioning on desktop */
     top: 70%;
+    left: 50%;
     transform: translate3d(-50%, -50%, 0) scale(1);
 }
 
