@@ -141,12 +141,24 @@ class ZoomScroll {
 
             // HERO section - always visible, zooms normally
             if (section === 'hero') {
-                // Skip transform updates for lghtwvs 8 (3rd hero layer) - CSS handles bottom positioning
+                // Special handling for lghtwvs 8 (bottom-anchored layer)
                 const isLayer8 = layer.src && layer.src.includes('lghtwvs 8');
 
-                if (!isLayer8) {
-                    // Only update transform if it changed
-                    const transformKey = `${layerZoom.toFixed(2)}`; // Reduced precision for mobile
+                if (isLayer8) {
+                    // For layer 8: Only horizontal centering and scaling, no vertical translation
+                    // CSS handles vertical positioning with bottom: -20%
+                    const layer8Scale = layerZoom * 1.5; // Match CSS scale multiplier
+                    const transformKey = `layer8-${layer8Scale.toFixed(2)}`;
+                    if (!transforms.has(transformKey)) {
+                        transforms.set(transformKey, `translateX(-50%) scale(${layer8Scale})`);
+                    }
+                    const newTransform = transforms.get(transformKey);
+                    if (layer.style.transform !== newTransform) {
+                        layer.style.transform = newTransform;
+                    }
+                } else {
+                    // Standard layers: Center both X and Y
+                    const transformKey = `${layerZoom.toFixed(2)}`;
                     if (!transforms.has(transformKey)) {
                         transforms.set(transformKey, `translate3d(-50%, -50%, 0) scale(${layerZoom})`);
                     }
