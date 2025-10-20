@@ -57,6 +57,10 @@ class CanvasParallax {
         // Text overlay state
         this.davidMorinSpread = 0;
 
+        // Smooth opacity interpolation for info panel
+        this.infoPanelOpacity = 0.001; // Start pre-warmed
+        this.targetInfoPanelOpacity = 0.001;
+
         this.init();
     }
 
@@ -222,14 +226,14 @@ class CanvasParallax {
                 this.drawHeroLayer(img, layer, layerZoom, scrollProgress);
                 layersDrawn++;
             } else if (layer.type === 'info') {
-                // INFO layers grow from microscopic
+                // INFO layers ALWAYS drawn - starts microscopic for GPU pre-warming
+                // This eliminates stutter when they first appear
                 const infoScale = 0.001 + (scrollProgress * 1.0);
                 const finalScale = layerZoom * infoScale;
 
-                if (finalScale > 0.01) { // Only draw if visible
-                    this.drawInfoLayer(img, layer, finalScale);
-                    layersDrawn++;
-                }
+                // Always draw, even at tiny scale - keeps GPU layer active
+                this.drawInfoLayer(img, layer, finalScale);
+                layersDrawn++;
             }
         }
 
@@ -239,15 +243,26 @@ class CanvasParallax {
         // Draw text overlay (DAVID MORIN)
         this.drawTextOverlay(scrollProgress);
 
-        // Show/hide info panel at scroll threshold
+        // SMOOTH info panel appearance - no classList toggling to prevent stutter
         const infoPanelThreshold = 0.12; // 12% scroll - record appears
         if (scrollProgress > infoPanelThreshold) {
-            this.infoPanel.classList.add('visible');
-            this.davidMorinSpread = Math.min(1, (scrollProgress - infoPanelThreshold) * 5);
+            // Gradually increase opacity over 5% scroll range for smooth fade-in
+            const fadeRange = 0.05;
+            const fadeProgress = Math.min(1, (scrollProgress - infoPanelThreshold) / fadeRange);
+            this.targetInfoPanelOpacity = fadeProgress;
+            this.davidMorinSpread = Math.min(1, fadeProgress);
         } else {
-            this.infoPanel.classList.remove('visible');
+            this.targetInfoPanelOpacity = 0.001; // Keep pre-warmed, not fully 0
             this.davidMorinSpread = 0;
         }
+
+        // Smooth interpolation of info panel opacity
+        const opacitySpeed = 0.1; // Smooth easing
+        this.infoPanelOpacity += (this.targetInfoPanelOpacity - this.infoPanelOpacity) * opacitySpeed;
+
+        // Apply smooth opacity directly without class changes
+        this.infoPanel.style.opacity = this.infoPanelOpacity.toFixed(3);
+        this.infoPanel.style.pointerEvents = this.infoPanelOpacity > 0.5 ? 'auto' : 'none';
 
         // Store for debug
         this.layersDrawn = layersDrawn;

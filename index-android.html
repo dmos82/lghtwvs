@@ -26,9 +26,12 @@
             width: 100vw;
             height: 100vh;
             z-index: 1;
+            /* Android optimization: Contain paint and layout */
+            contain: layout style paint;
+            will-change: contents;
         }
 
-        /* Info Panel Overlay - Hidden until scroll */
+        /* Info Panel Overlay - Start visible but tiny for GPU pre-warming */
         #infoPanel {
             position: fixed;
             top: 50%;
@@ -39,9 +42,12 @@
             max-width: 800px;
             max-height: 800px;
             z-index: 100;
-            opacity: 0;
-            transition: opacity 1s ease;
+            opacity: 0.001; /* Start at tiny opacity instead of 0 - pre-warms GPU */
+            transition: none; /* Remove transition to eliminate stutter */
             pointer-events: none;
+            will-change: opacity; /* Hint to browser for GPU optimization */
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
         }
 
         #infoPanel.visible {
@@ -54,11 +60,14 @@
             width: 100%;
             height: 100%;
             animation: spin 4s linear infinite;
+            will-change: transform; /* GPU acceleration hint */
+            transform: translateZ(0); /* Force GPU layer */
+            backface-visibility: hidden;
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from { transform: rotate(0deg) translateZ(0); }
+            to { transform: rotate(360deg) translateZ(0); }
         }
 
         .info-content {
@@ -78,6 +87,9 @@
             text-align: center;
             overflow-y: auto;
             overflow-x: hidden;
+            /* Android optimization: Contain layout changes */
+            contain: layout style;
+            will-change: scroll-position;
         }
 
         .artist-name-vinyl {
