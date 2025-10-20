@@ -432,6 +432,10 @@ body {
     .info-layer {
         max-width: 95%;
         max-height: 95%;
+        /* Mobile performance hints */
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
     }
 
     /* lghtwvs 8 - position at bottom on mobile and increase size */

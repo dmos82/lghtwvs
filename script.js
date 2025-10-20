@@ -23,6 +23,10 @@ class ZoomScroll {
             isLayer9: layer.alt === 'Layer 9'
         }));
 
+        // Initialize persistent transform cache for better performance
+        this.transformCache = new Map();
+        this.maxCacheSize = 200; // Limit cache size for mobile memory
+
         // Scroll settings
         this.scrollHeight = 2500; // Short scroll - ends when record fits INFO circle
         this.minZoom = 1; // Starting zoom level
@@ -94,6 +98,13 @@ class ZoomScroll {
         const scrollY = window.scrollY;
         const scrollProgress = scrollY / this.scrollHeight; // 0 to 1
 
+        // Mobile optimization: Skip tiny scroll updates
+        if (this.isMobile) {
+            const scrollDelta = Math.abs(scrollY - (this.lastProcessedScroll || 0));
+            if (scrollDelta < 2) return; // Skip if scroll change is less than 2px
+            this.lastProcessedScroll = scrollY;
+        }
+
         // No zoom capping - scroll ends naturally when record fits
         const cappedScrollProgress = scrollProgress;
 
@@ -110,8 +121,18 @@ class ZoomScroll {
         const overlayThreshold = 2;
         const overlayVisible = baseZoom > overlayThreshold;
 
-        // Cache transform strings to avoid recreating them
-        const transforms = new Map();
+        // Use persistent cache for better backward scroll performance
+        const transforms = this.transformCache;
+
+        // Clean cache if it gets too large (mobile memory management)
+        if (transforms.size > this.maxCacheSize) {
+            const entriesToDelete = transforms.size - this.maxCacheSize + 50;
+            let deleted = 0;
+            for (let key of transforms.keys()) {
+                if (deleted++ >= entriesToDelete) break;
+                transforms.delete(key);
+            }
+        }
 
         // Process layers in a single pass with optimized loops using cached data
         for (let i = 0; i < this.layerData.length; i++) {
@@ -121,13 +142,16 @@ class ZoomScroll {
             // HERO section - always visible, zooms normally
             if (section === 'hero') {
                 // Only update transform if it changed
-                const transformKey = `${layerZoom.toFixed(3)}`;
+                const transformKey = `${layerZoom.toFixed(2)}`; // Reduced precision for mobile
                 if (!transforms.has(transformKey)) {
                     transforms.set(transformKey, `translate3d(-50%, -50%, 0) scale(${layerZoom})`);
                 }
 
-                // Use cached transform
-                layer.style.transform = transforms.get(transformKey);
+                // Only update DOM if transform actually changed
+                const newTransform = transforms.get(transformKey);
+                if (layer.style.transform !== newTransform) {
+                    layer.style.transform = newTransform;
+                }
 
                 // Special handling for layer 9 fade
                 if (isLayer9) {
@@ -180,11 +204,16 @@ class ZoomScroll {
                     transforms.set(infoTransformKey, `translate3d(-50%, -50%, 0) scale(${roundedScale})`);
                 }
 
-                layer.style.transform = transforms.get(infoTransformKey);
+                // Only update DOM if transform actually changed
+                const newInfoTransform = transforms.get(infoTransformKey);
+                if (layer.style.transform !== newInfoTransform) {
+                    layer.style.transform = newInfoTransform;
+                }
 
-                // Ensure it's always visible
-                if (layer.style.opacity !== '1') {
+                // Remove opacity check - it's always 1 after first set
+                if (!layer.dataset.opacitySet) {
                     layer.style.opacity = '1';
+                    layer.dataset.opacitySet = 'true';
                 }
             }
         }
@@ -194,13 +223,14 @@ class ZoomScroll {
 
         // Show info panel when INFO images have grown significantly (appears after HERO zoom)
         const infoPanelThreshold = 0.30; // Moved to 30% for more HERO zoom time (600px of scroll)
-        if (scrollProgress > infoPanelThreshold) {
+        const shouldShowPanel = scrollProgress > infoPanelThreshold;
+
+        // Only toggle classes if state actually changed
+        if (shouldShowPanel && !this.infoPanel.classList.contains('visible')) {
             this.infoPanel.classList.add('visible');
-            // Trigger curtain effect when info panel opens
             this.overlay.classList.add('curtain-open');
-        } else {
+        } else if (!shouldShowPanel && this.infoPanel.classList.contains('visible')) {
             this.infoPanel.classList.remove('visible');
-            // Reset curtain effect when scrolling back up
             this.overlay.classList.remove('curtain-open');
         }
 
