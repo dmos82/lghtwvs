@@ -252,22 +252,11 @@
     <!-- Loading Screen -->
     <div id="loading">Loading LGHTWVS...</div>
 
-    <!-- Scroll Indicator -->
-    <div id="scrollIndicator" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); color: #0f0; font-family: 'Orbitron', monospace; font-size: 0.8rem; text-align: center; z-index: 100; animation: bounce 2s infinite;">
-        ↓ SCROLL FOR LINKS ↓
-    </div>
-    <style>
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-10px); }
-        }
-    </style>
-
     <!-- Main Canvas -->
     <canvas id="canvas"></canvas>
 
     <!-- Info Panel (HTML overlay for links) -->
-    <div id="infoPanel">
+    <div id="infoPanel" class="visible">
         <img src="INFO/LGHTWVS LP.png" alt="Spinning LP" class="spinning-lp">
         <!-- DAVID MORIN on the vinyl itself -->
         <img src="INFO/DAVID-MORIN-transparent.png" alt="DAVID MORIN" class="artist-name-vinyl">

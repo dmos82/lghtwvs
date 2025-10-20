@@ -54,10 +54,6 @@ class CanvasParallax {
         this.animationFrame = null;
         this.isAnimating = false;
 
-        // Text overlay state
-        this.davidMorinAlpha = 1;
-        this.davidMorinSpread = 0;
-
         this.init();
     }
 
@@ -224,24 +220,8 @@ class CanvasParallax {
         // Restore context
         this.ctx.restore();
 
-        // Draw text overlay (DAVID MORIN)
-        this.drawTextOverlay(scrollProgress);
-
-        // Show/hide info panel - lowered threshold for easier access
-        const infoPanelThreshold = 0.10; // Reduced from 0.30 to 0.10 (10% scroll)
-        const scrollIndicator = document.getElementById('scrollIndicator');
-
-        if (scrollProgress > infoPanelThreshold) {
-            this.infoPanel.classList.add('visible');
-            this.davidMorinSpread = Math.min(1, (scrollProgress - infoPanelThreshold) * 5);
-            // Hide scroll indicator when info panel is visible
-            if (scrollIndicator) scrollIndicator.style.display = 'none';
-        } else {
-            this.infoPanel.classList.remove('visible');
-            this.davidMorinSpread = 0;
-            // Show scroll indicator when info panel is hidden
-            if (scrollIndicator) scrollIndicator.style.display = 'block';
-        }
+        // Info panel is always visible - no need for scroll logic
+        // DAVID MORIN text overlay removed to not block links
 
         // Store for debug
         this.layersDrawn = layersDrawn;
@@ -339,37 +319,7 @@ class CanvasParallax {
         this.ctx.restore();
     }
 
-    drawTextOverlay(scrollProgress) {
-        // DAVID MORIN text with curtain effect
-        const spread = this.davidMorinSpread;
-
-        if (scrollProgress < 0.10 || spread < 0.1) { // Hide at 10% to show info panel
-            this.ctx.save();
-
-            // Scale based on viewport - use pixel values for crisp text
-            const fontSize = Math.min(120, this.canvas.width * 0.12); // Use pixels instead of rem
-            this.ctx.font = `bold ${fontSize}px Orbitron`;
-            this.ctx.fillStyle = this.isMobile ? '#fff' : '#0f0';
-            this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle'; // Ensure text is properly centered
-            this.ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
-            this.ctx.shadowBlur = 20;
-
-            // Draw DAVID (moving left) - wider spacing
-            const spacing = this.canvas.width * 0.15; // Dynamic spacing based on viewport
-            const textY = this.centerY - 30; // Move main text up slightly to make room
-            const davidX = this.centerX - spacing - (spread * 500);
-            this.ctx.fillText('DAVID', davidX, textY);
-
-            // Draw MORIN (moving right) - wider spacing
-            const morinX = this.centerX + spacing + (spread * 500);
-            this.ctx.fillText('MORIN', morinX, textY);
-
-            // LIGHT WAVES subtitle removed - was appearing on chest
-
-            this.ctx.restore();
-        }
-    }
+    // Text overlay removed - info panel is always visible with all links
 
     updateDebug() {
         if (this.debug.classList.contains('visible')) {
