@@ -54,6 +54,9 @@ class CanvasParallax {
         this.animationFrame = null;
         this.isAnimating = false;
 
+        // Text overlay state
+        this.davidMorinSpread = 0;
+
         this.init();
     }
 
@@ -220,8 +223,18 @@ class CanvasParallax {
         // Restore context
         this.ctx.restore();
 
-        // No text overlay - info panel always visible
-        // No scroll logic - record always shows
+        // Draw text overlay (DAVID MORIN)
+        this.drawTextOverlay(scrollProgress);
+
+        // Show/hide info panel at scroll threshold
+        const infoPanelThreshold = 0.12; // 12% scroll - record appears
+        if (scrollProgress > infoPanelThreshold) {
+            this.infoPanel.classList.add('visible');
+            this.davidMorinSpread = Math.min(1, (scrollProgress - infoPanelThreshold) * 5);
+        } else {
+            this.infoPanel.classList.remove('visible');
+            this.davidMorinSpread = 0;
+        }
 
         // Store for debug
         this.layersDrawn = layersDrawn;
@@ -319,7 +332,35 @@ class CanvasParallax {
         this.ctx.restore();
     }
 
-    // Text overlay removed - info panel always visible
+    drawTextOverlay(scrollProgress) {
+        // DAVID MORIN text with curtain effect
+        const spread = this.davidMorinSpread;
+
+        if (scrollProgress < 0.35 || spread < 0.1) {
+            this.ctx.save();
+
+            // Scale based on viewport - use pixel values for crisp text
+            const fontSize = Math.min(120, this.canvas.width * 0.12);
+            this.ctx.font = `bold ${fontSize}px Orbitron`;
+            this.ctx.fillStyle = this.isMobile ? '#fff' : '#0f0';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+            this.ctx.shadowBlur = 20;
+
+            // Draw DAVID (moving left) - wider spacing
+            const spacing = this.canvas.width * 0.15;
+            const textY = this.centerY - 30;
+            const davidX = this.centerX - spacing - (spread * 500);
+            this.ctx.fillText('DAVID', davidX, textY);
+
+            // Draw MORIN (moving right) - wider spacing
+            const morinX = this.centerX + spacing + (spread * 500);
+            this.ctx.fillText('MORIN', morinX, textY);
+
+            this.ctx.restore();
+        }
+    }
 
     updateDebug() {
         if (this.debug.classList.contains('visible')) {
