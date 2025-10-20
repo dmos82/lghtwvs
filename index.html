@@ -39,12 +39,6 @@
             max-width: 800px;
             max-height: 800px;
             z-index: 100;
-            opacity: 0;
-            transition: opacity 1s ease;
-            pointer-events: none;
-        }
-
-        #infoPanel.visible {
             opacity: 1;
             pointer-events: auto;
         }
@@ -256,7 +250,7 @@
     <canvas id="canvas"></canvas>
 
     <!-- Info Panel (HTML overlay for links) -->
-    <div id="infoPanel" class="visible">
+    <div id="infoPanel">
         <img src="INFO/LGHTWVS LP.png" alt="Spinning LP" class="spinning-lp">
         <!-- DAVID MORIN on the vinyl itself -->
         <img src="INFO/DAVID-MORIN-transparent.png" alt="DAVID MORIN" class="artist-name-vinyl">
