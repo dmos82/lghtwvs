@@ -8,12 +8,12 @@ class CanvasParallax {
         this.canvas = document.getElementById('canvas');
         this.ctx = this.canvas.getContext('2d', {
             alpha: false,
-            desynchronized: true
+            desynchronized: true,
+            willReadFrequently: false // Hint that we won't read pixels
         });
 
-        // Enable better text rendering
-        this.ctx.imageSmoothingEnabled = true;
-        this.ctx.imageSmoothingQuality = 'high';
+        // ANDROID: Disable image smoothing for better performance
+        this.ctx.imageSmoothingEnabled = false;
         this.loading = document.getElementById('loading');
         this.debug = document.getElementById('debug');
         this.infoPanel = document.getElementById('infoPanel');
@@ -23,6 +23,7 @@ class CanvasParallax {
         this.frameTime = 0;
         this.lastTime = performance.now();
         this.frameCount = 0;
+        this.renderFrameCount = 0; // Track rendered frames for skip logic
 
         // Scroll and zoom state
         this.scrollY = 0;
@@ -31,18 +32,15 @@ class CanvasParallax {
         this.targetZoom = 1;
         this.scrollHeight = 2500;
 
-        // Layer configuration
+        // Layer configuration - AGGRESSIVELY REDUCED for Android
+        // Only 4 total layers - absolute minimum for visual effect
         this.layers = [
-            // HERO layers (back to front)
+            // HERO layers - only 3 essential layers
             { src: 'HERO/lghtwvs 11.JPG', speed: 1.8, type: 'hero', scale: 1 },
-            { src: 'HERO/lghtwvs 9.jpg', speed: 1.5, type: 'hero', scale: 1, fadeOut: true },
             { src: 'HERO/lghtwvs 8.png', speed: 1.4, type: 'hero', scale: 1, isBottom: true },
-            { src: 'HERO/lghtwvs-4-5-merged.png', speed: 0.95, type: 'hero', scale: 1 },
-            { src: 'HERO/lghtwvs-2-3-merged.png', speed: 0.7, type: 'hero', scale: 1 },
             { src: 'HERO/lghtwvs 1.png', speed: 0.5, type: 'hero', scale: 1 },
 
-            // INFO layers
-            { src: 'INFO/LGHTWVS INFO 7.png', speed: 1.6, type: 'info', scale: 0.001 },
+            // INFO layer - only 1 layer
             { src: 'INFO/center-image-circle.png', speed: 1.0, type: 'info', scale: 0.001 }
         ];
 
@@ -128,10 +126,10 @@ class CanvasParallax {
     }
 
     resize() {
-        // ANDROID OPTIMIZATION: Cap DPR at 1.5 to prevent massive canvas sizes
-        // Many Android devices have 3x DPR which creates 9x pixel count
+        // ANDROID OPTIMIZATION: Cap DPR at 1.0 for maximum performance
+        // Even 1.5x DPR is too heavy for lower-end Android devices
         const nativeDpr = window.devicePixelRatio || 1;
-        const dpr = Math.min(nativeDpr, 1.5); // Cap at 1.5 for performance
+        const dpr = 1.0; // Force 1.0 DPR for best performance
 
         // Get display size
         const displayWidth = window.innerWidth;
@@ -168,23 +166,33 @@ class CanvasParallax {
         const delta = now - this.lastTime;
         this.frameTime = delta;
 
-        // ANDROID OPTIMIZATION: Throttle to 30fps instead of 60fps
-        // Reduces GPU load significantly while maintaining smooth appearance
-        if (delta < 33) { // 33ms = ~30fps
+        // ANDROID OPTIMIZATION: Aggressive throttle to 20fps
+        // 50ms = 20fps - further reduces GPU load
+        if (delta < 50) { // 50ms = 20fps (was 33ms/30fps)
             this.animationFrame = requestAnimationFrame(() => this.animate());
             return;
         }
 
         this.lastTime = now;
         this.frameCount++;
+        this.renderFrameCount++;
 
-        if (this.frameCount % 15 === 0) { // Update debug more frequently at 30fps
+        // SKIP EVERY 3RD FRAME for even more performance
+        // Render 2, skip 1 = effective ~13fps but still smooth
+        if (this.renderFrameCount % 3 === 0) {
+            // Skip this render frame, just update logic
+            this.scrollY += (this.targetScrollY - this.scrollY) * 0.2;
+            this.animationFrame = requestAnimationFrame(() => this.animate());
+            return;
+        }
+
+        if (this.frameCount % 10 === 0) {
             this.fps = Math.round(1000 / delta);
             this.updateDebug();
         }
 
-        // Smooth scroll interpolation - slightly more aggressive for snappier feel at 30fps
-        const scrollSpeed = this.isMobile ? 0.15 : 0.15;
+        // Smooth scroll interpolation - more aggressive for responsiveness
+        const scrollSpeed = 0.2; // Increased from 0.15
         this.scrollY += (this.targetScrollY - this.scrollY) * scrollSpeed;
 
         // Calculate scroll progress
