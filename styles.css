@@ -430,11 +430,12 @@ body {
 
     /* lghtwvs 8 - position at bottom on mobile and increase size */
     .hero-layer:nth-child(3) {
-        top: auto;
-        bottom: 0;
+        position: fixed;
+        bottom: -10%;  /* Negative to pull image down if it has transparent bottom */
         left: 50%;
-        transform: translate3d(-50%, 0%, 0) scale(1.3);
+        transform: translateX(-50%) scale(1.3);
         transform-origin: bottom center;
+        top: auto;
     }
 
     .overlay h1 {
