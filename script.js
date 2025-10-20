@@ -227,14 +227,20 @@ class CanvasParallax {
         // Draw text overlay (DAVID MORIN)
         this.drawTextOverlay(scrollProgress);
 
-        // Show/hide info panel
-        const infoPanelThreshold = 0.30;
+        // Show/hide info panel - lowered threshold for easier access
+        const infoPanelThreshold = 0.10; // Reduced from 0.30 to 0.10 (10% scroll)
+        const scrollIndicator = document.getElementById('scrollIndicator');
+
         if (scrollProgress > infoPanelThreshold) {
             this.infoPanel.classList.add('visible');
             this.davidMorinSpread = Math.min(1, (scrollProgress - infoPanelThreshold) * 5);
+            // Hide scroll indicator when info panel is visible
+            if (scrollIndicator) scrollIndicator.style.display = 'none';
         } else {
             this.infoPanel.classList.remove('visible');
             this.davidMorinSpread = 0;
+            // Show scroll indicator when info panel is hidden
+            if (scrollIndicator) scrollIndicator.style.display = 'block';
         }
 
         // Store for debug
@@ -337,7 +343,7 @@ class CanvasParallax {
         // DAVID MORIN text with curtain effect
         const spread = this.davidMorinSpread;
 
-        if (scrollProgress < 0.35 || spread < 0.1) {
+        if (scrollProgress < 0.10 || spread < 0.1) { // Hide at 10% to show info panel
             this.ctx.save();
 
             // Scale based on viewport - use pixel values for crisp text
