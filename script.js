@@ -225,7 +225,7 @@ class ZoomScroll {
         // Handle layer 8 (bottom-fixed layer) separately - it's outside viewport
         if (this.layer8) {
             const layer8Zoom = 1 + ((baseZoom - 1) * 1.4); // Match its data-speed of 1.4
-            const layer8Scale = layer8Zoom * (this.isMobile ? 2.5 : 0.6); // Desktop reduced by 60%
+            const layer8Scale = layer8Zoom * (this.isMobile ? 2.5 : 0.75); // Desktop: 0.75 scale
             const layer8TransformKey = `layer8-${layer8Scale.toFixed(2)}`;
             if (!transforms.has(layer8TransformKey)) {
                 transforms.set(layer8TransformKey, `translateX(-50%) scale(${layer8Scale})`);
