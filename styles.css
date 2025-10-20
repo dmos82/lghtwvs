@@ -454,31 +454,22 @@ body {
     }
 
     .info-content {
-        width: 75vw;  /* Reduced from 90vw to fit within record */
-        height: 75vw;
-        max-width: 400px;  /* Reduced from 500px */
-        max-height: 400px;
-        padding: 1.5rem;  /* Reduced from 2rem */
+        width: 70vw;  /* Even smaller to give breathing room */
+        height: 70vw;
+        max-width: 350px;  /* Reduced for better fit */
+        max-height: 350px;
+        padding: 1rem;  /* Minimal padding to maximize space */
     }
 
     .artist-name-image {
-        width: 60%;  /* Even smaller on mobile */
-        max-width: 180px;  /* Smaller max width on mobile */
-        margin: 0 auto 0.8rem auto;  /* Center with auto margins */
+        width: 50%;  /* Much smaller for better fit */
+        max-width: 150px;  /* Reduced max width */
+        margin: 0 auto 1rem auto;  /* Center with auto margins */
         display: block;  /* Ensure block display for centering */
     }
 
     .bio {
-        font-size: 0.85rem;  /* Smaller bio text */
-        margin-bottom: 1rem;  /* Reduced margin */
-        background: linear-gradient(135deg, #0f0 0%, #0ff 100%);  /* Match store button style */
-        color: #000;  /* Black text on gradient */
-        padding: 0.5rem 1rem;  /* Add padding for background */
-        clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);  /* Subtle angled edges */
-        text-shadow: none;  /* Remove cyan text shadow for better readability */
-        font-weight: 500;  /* Slightly bolder for contrast */
-        box-shadow: 0 0 20px rgba(0, 255, 0, 0.4),
-                    0 0 30px rgba(0, 255, 255, 0.3);  /* Add glow like store button */
+        display: none;  /* Hide bio on mobile to save space */
     }
 
     .links-section {

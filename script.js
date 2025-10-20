@@ -24,7 +24,7 @@ class ZoomScroll {
         }));
 
         // Scroll settings
-        this.scrollHeight = 4000; // Further reduced for quicker HERO scroll
+        this.scrollHeight = 2500; // Short scroll - ends when record fits INFO circle
         this.minZoom = 1; // Starting zoom level
         this.maxZoom = 10; // Maximum zoom level
 
@@ -80,13 +80,13 @@ class ZoomScroll {
 
         console.log('✅ Zoom Scroll initialized');
         console.log(`   Scroll height: ${this.scrollHeight}px (reduced for faster response)`);
-        console.log(`   Zoom range: ${this.minZoom}x - 6x (stops at 55% scroll)`);
-        console.log(`   Mobile starts at 5% zoom (slight zoom for balance)`);
+        console.log(`   Zoom range: ${this.minZoom}x - 2.5x (gentle zoom to prevent pixelation)`);
+        console.log(`   Mobile & Desktop: Unified zoom behavior`);
         console.log(`   HERO layers: ${this.heroLayers.length} (reduced from 8 to 6 with merged images)`);
         console.log(`   INFO layers: ${this.infoLayers.length} (linear growth, balanced with HERO)`);
-        console.log(`   Overlay text: Always visible (no fade-in lag)`);
-        console.log(`   Info panel & curtain: Appear at 12% scroll`);
-        console.log(`   All scrolling stops at 55% (when spinning record fully appears)`);
+        console.log(`   DAVID MORIN: Using custom font image with transparency`);
+        console.log(`   Info panel & curtain: Appear at 30% scroll (750px)`);
+        console.log(`   Total scroll: 2500px - ends when record fits INFO circle`);
         console.log(`   Press 'd' to toggle debug info`);
     }
 
@@ -94,24 +94,20 @@ class ZoomScroll {
         const scrollY = window.scrollY;
         const scrollProgress = scrollY / this.scrollHeight; // 0 to 1
 
-        // Cap zoom at 55% scroll (stop when spinning record fully appears)
-        const zoomCutoff = 0.55;
-        const cappedScrollProgress = Math.min(scrollProgress, zoomCutoff);
+        // No zoom capping - scroll ends naturally when record fits
+        const cappedScrollProgress = scrollProgress;
 
-        // Calculate base zoom level - start mobile at 5% progress (zoom ~1.45)
+        // Calculate base zoom level - mobile now uses same zoom as desktop
         let effectiveProgress = cappedScrollProgress;
-        if (this.isMobile) {
-            // Start at 5% zoom on mobile (slightly zoomed for better balance)
-            effectiveProgress = 0.05 + (cappedScrollProgress * 0.95);
-        }
+        // Removed mobile-specific zoom start - now identical to desktop
 
-        // Zoom progresses from 0-55% scroll, then stays constant
-        // Scale to make zoom reach ~6x at 55% scroll
-        const maxZoomAtCutoff = 6;
-        const baseZoom = this.minZoom + (effectiveProgress * 1.82 * (maxZoomAtCutoff - this.minZoom));
+        // Zoom progresses throughout the entire short scroll
+        // Scale to make zoom reach ~2.5x at 100% scroll (when record fits INFO circle)
+        const maxZoomAtCutoff = 2.5;
+        const baseZoom = this.minZoom + (effectiveProgress * (maxZoomAtCutoff - this.minZoom));
 
-        // Show overlay when zoomed in (around 33% scroll is when baseZoom hits ~3)
-        const overlayThreshold = 3;
+        // Show overlay when zoomed in (around 33% scroll is when baseZoom hits ~2)
+        const overlayThreshold = 2;
         const overlayVisible = baseZoom > overlayThreshold;
 
         // Cache transform strings to avoid recreating them
@@ -167,15 +163,15 @@ class ZoomScroll {
                 const infoGrowthStart = 0.001;  // Microscopic start
 
                 // Linear growth that matches HERO zoom rate
-                // Capped at 55% like HERO zoom
-                const cappedInfoProgress = Math.min(scrollProgress, 0.55);
+                // No capping - INFO grows throughout the short scroll
+                const cappedInfoProgress = scrollProgress;
 
-                // Simple linear scaling - grows from 0.001 to ~1 over 55% scroll
-                // This creates uniform movement with HERO layers
-                const infoScale = infoGrowthStart + (cappedInfoProgress * 1.8);
+                // Simple linear scaling - grows from 0.001 to ~1.0 over full scroll
+                // This creates uniform movement with HERO layers - sized to fill circle at end
+                const infoScale = infoGrowthStart + (cappedInfoProgress * 1.0);
 
-                // Apply parallax zoom similar to HERO
-                const finalScale = Math.min(layerZoom * infoScale, 50);
+                // Apply parallax zoom similar to HERO - cap at 5 to prevent pixelation
+                const finalScale = Math.min(layerZoom * infoScale, 5);
                 const roundedScale = Math.round(finalScale * 100) / 100;
 
                 // Cache the transform
@@ -196,8 +192,8 @@ class ZoomScroll {
         // Overlay is now always visible from start - no state changes needed
         // The curtain effect still happens at the right time
 
-        // Show info panel when INFO images have grown significantly (appears very early in scroll)
-        const infoPanelThreshold = 0.12; // Moved to 12% for very early appearance
+        // Show info panel when INFO images have grown significantly (appears after HERO zoom)
+        const infoPanelThreshold = 0.30; // Moved to 30% for more HERO zoom time (600px of scroll)
         if (scrollProgress > infoPanelThreshold) {
             this.infoPanel.classList.add('visible');
             // Trigger curtain effect when info panel opens
