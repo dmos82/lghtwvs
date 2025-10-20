@@ -23,17 +23,43 @@
             justify-content: center;
         }
 
-        /* Background image */
+        /* Background image - layered */
         .background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('HERO/optimized/lghtwvs-11-optimized.jpg');
-            background-size: cover;
-            background-position: center;
             z-index: 1;
+        }
+
+        .bg-layer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .bg-layer-11 {
+            z-index: 1;
+        }
+
+        .bg-layer-1 {
+            z-index: 3;
+        }
+
+        .bg-layer-8 {
+            position: absolute;
+            bottom: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto;
+            max-width: 90%;
+            height: auto;
+            z-index: 5;
         }
 
         /* Info Panel */
@@ -155,7 +181,11 @@
     </style>
 </head>
 <body>
-    <div class="background"></div>
+    <div class="background">
+        <img src="HERO/lghtwvs 11.JPG" alt="Background" class="bg-layer bg-layer-11">
+        <img src="HERO/lghtwvs 1.png" alt="Base layer" class="bg-layer bg-layer-1">
+        <img src="HERO/lghtwvs 8.png" alt="Figure" class="bg-layer-8">
+    </div>
 
     <div class="info-panel">
         <img src="INFO/LGHTWVS LP.png" alt="Spinning LP" class="spinning-lp">
