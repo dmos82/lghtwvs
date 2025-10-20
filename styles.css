@@ -479,6 +479,7 @@ body {
         max-width: 150px;  /* Reduced max width */
         margin: 0 auto 1rem auto;  /* Center with auto margins */
         display: block;  /* Ensure block display for centering */
+        filter: brightness(0) invert(1);  /* Convert to white */
     }
 
     .bio {
