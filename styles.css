@@ -99,15 +99,17 @@ body {
     transform: translate3d(-50%, -50%, 0);
 }
 
-/* lghtwvs 8 - positioned at bottom on DESKTOP too */
-.hero-layer:nth-child(3) {
-    position: fixed;
-    bottom: -20%;  /* Negative to compensate for transparent areas */
-    left: 50%;
-    transform: translateX(-50%) scale(1.5);  /* Larger for desktop too */
-    transform-origin: center bottom;
-    top: auto;
+/* lghtwvs 8 - positioned at bottom, OUTSIDE viewport for true fixed positioning */
+.hero-layer-bottom {
+    position: fixed !important;
+    bottom: -20% !important;  /* Negative to compensate for transparent areas */
+    left: 50% !important;
+    top: auto !important;
+    transform: translateX(-50%) scale(1.5) !important;  /* Larger for desktop */
+    transform-origin: center bottom !important;
     z-index: 5;
+    max-width: 90% !important;
+    max-height: none !important;
 }
 
 /* Overlay text - always visible from start */
@@ -439,14 +441,9 @@ body {
     }
 
     /* lghtwvs 8 - position at bottom on mobile and increase size */
-    .hero-layer:nth-child(3) {
-        position: fixed;
-        bottom: -30%;  /* Much more negative to actually reach the bottom */
-        left: 50%;
-        transform: translateX(-50%) scale(2.5);  /* Much larger scale for better visibility */
-        transform-origin: center bottom;
-        top: auto;
-        z-index: 5;
+    .hero-layer-bottom {
+        bottom: -30% !important;  /* Much more negative to actually reach the bottom */
+        transform: translateX(-50%) scale(2.5) !important;  /* Much larger scale for better visibility */
     }
 
     .overlay h1 {

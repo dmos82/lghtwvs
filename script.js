@@ -11,6 +11,7 @@ class ZoomScroll {
         this.overlay = document.getElementById('overlay');
         this.infoPanel = document.getElementById('infoPanel');
         this.debugInfo = document.getElementById('debugInfo');
+        this.layer8 = document.getElementById('layer8'); // Bottom-fixed layer outside viewport
         this.heroLayers = document.querySelectorAll('.hero-layer');
         this.infoLayers = document.querySelectorAll('.info-layer');
         this.allLayers = document.querySelectorAll('.hero-layer, .info-layer');
@@ -141,33 +142,16 @@ class ZoomScroll {
 
             // HERO section - always visible, zooms normally
             if (section === 'hero') {
-                // Special handling for lghtwvs 8 (bottom-anchored layer)
-                const isLayer8 = layer.src && layer.src.includes('lghtwvs 8');
+                // Standard layers: Center both X and Y
+                const transformKey = `${layerZoom.toFixed(2)}`;
+                if (!transforms.has(transformKey)) {
+                    transforms.set(transformKey, `translate3d(-50%, -50%, 0) scale(${layerZoom})`);
+                }
 
-                if (isLayer8) {
-                    // For layer 8: Only horizontal centering and scaling, no vertical translation
-                    // CSS handles vertical positioning with bottom: -20%
-                    const layer8Scale = layerZoom * 1.5; // Match CSS scale multiplier
-                    const transformKey = `layer8-${layer8Scale.toFixed(2)}`;
-                    if (!transforms.has(transformKey)) {
-                        transforms.set(transformKey, `translateX(-50%) scale(${layer8Scale})`);
-                    }
-                    const newTransform = transforms.get(transformKey);
-                    if (layer.style.transform !== newTransform) {
-                        layer.style.transform = newTransform;
-                    }
-                } else {
-                    // Standard layers: Center both X and Y
-                    const transformKey = `${layerZoom.toFixed(2)}`;
-                    if (!transforms.has(transformKey)) {
-                        transforms.set(transformKey, `translate3d(-50%, -50%, 0) scale(${layerZoom})`);
-                    }
-
-                    // Only update DOM if transform actually changed
-                    const newTransform = transforms.get(transformKey);
-                    if (layer.style.transform !== newTransform) {
-                        layer.style.transform = newTransform;
-                    }
+                // Only update DOM if transform actually changed
+                const newTransform = transforms.get(transformKey);
+                if (layer.style.transform !== newTransform) {
+                    layer.style.transform = newTransform;
                 }
 
                 // Special handling for layer 9 fade
@@ -237,6 +221,20 @@ class ZoomScroll {
 
         // Overlay is now always visible from start - no state changes needed
         // The curtain effect still happens at the right time
+
+        // Handle layer 8 (bottom-fixed layer) separately - it's outside viewport
+        if (this.layer8) {
+            const layer8Zoom = 1 + ((baseZoom - 1) * 1.4); // Match its data-speed of 1.4
+            const layer8Scale = layer8Zoom * (this.isMobile ? 2.5 : 1.5);
+            const layer8TransformKey = `layer8-${layer8Scale.toFixed(2)}`;
+            if (!transforms.has(layer8TransformKey)) {
+                transforms.set(layer8TransformKey, `translateX(-50%) scale(${layer8Scale})`);
+            }
+            const newLayer8Transform = transforms.get(layer8TransformKey);
+            if (this.layer8.style.transform !== newLayer8Transform) {
+                this.layer8.style.transform = newLayer8Transform;
+            }
+        }
 
         // Show info panel when INFO images have grown significantly (appears after HERO zoom)
         const infoPanelThreshold = 0.30; // Moved to 30% for more HERO zoom time (600px of scroll)
