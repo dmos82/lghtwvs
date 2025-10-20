@@ -38,9 +38,6 @@
             const ua = navigator.userAgent;
             const currentPath = window.location.pathname;
 
-            // Detect in-app browsers (Facebook, Instagram, TikTok, Twitter, LinkedIn, Messenger, etc.)
-            const isInAppBrowser = /FBAN|FBAV|Instagram|Twitter|Line|Snapchat|TikTok|LinkedIn|WeChat|WhatsApp|Messenger/i.test(ua);
-
             // Detect Android devices
             const isAndroid = /Android/i.test(ua);
             // Detect iOS devices
@@ -48,15 +45,18 @@
             // Detect other mobile
             const isOtherMobile = /webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua) || window.innerWidth <= 768;
 
+            // Detect in-app browsers ONLY on Android
+            const isAndroidInAppBrowser = isAndroid && /FBAN|FBAV|Instagram|Twitter|Line|Snapchat|TikTok|LinkedIn|WeChat|WhatsApp|Messenger/i.test(ua);
+
             // Route to appropriate version
-            if (isInAppBrowser && !currentPath.includes('index-simple.html')) {
-                // In-app browsers get simple static version (they're too glitchy for canvas)
+            if (isAndroidInAppBrowser && !currentPath.includes('index-simple.html')) {
+                // Android in-app browsers get simple CSS parallax (FB, Instagram, etc. are glitchy)
                 window.location.href = 'index-simple.html';
             } else if (isAndroid && !currentPath.includes('index-android.html')) {
-                // Android gets optimized version with compressed images
+                // Android native browsers get optimized canvas with compressed images
                 window.location.href = 'index-android.html';
             } else if (isIOS && !currentPath.includes('index-mobile.html')) {
-                // iOS gets full canvas version (works great on iPhone)
+                // iOS (including in-app browsers) gets full canvas version (works great on iPhone)
                 window.location.href = 'index-mobile.html';
             } else if (isOtherMobile && !currentPath.includes('index-mobile.html') && !currentPath.includes('index-android.html')) {
                 // Other mobile gets iOS version by default
