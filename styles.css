@@ -224,10 +224,11 @@ body {
 /* Old animated border removed - replaced with spinning LP record */
 
 .artist-name-image {
-    width: 100%;
-    max-width: 400px;
+    width: 70%;
+    max-width: 250px;
     height: auto;
-    margin-bottom: 1rem;
+    margin: 0 auto 1rem auto;
+    display: block;
     filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.8))
             drop-shadow(0 0 30px rgba(0, 255, 255, 0.6));
     animation: glitch 3s infinite;
@@ -461,9 +462,10 @@ body {
     }
 
     .artist-name-image {
-        width: 90%;  /* Slightly smaller on mobile */
-        max-width: 300px;  /* Smaller max width on mobile */
-        margin-bottom: 0.8rem;  /* Adjusted margin */
+        width: 60%;  /* Even smaller on mobile */
+        max-width: 180px;  /* Smaller max width on mobile */
+        margin: 0 auto 0.8rem auto;  /* Center with auto margins */
+        display: block;  /* Ensure block display for centering */
     }
 
     .bio {
