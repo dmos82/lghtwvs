@@ -433,7 +433,7 @@ body {
         position: fixed;
         bottom: -30%;  /* Much more negative to actually reach the bottom */
         left: 50%;
-        transform: translateX(-50%) scale(1.8);  /* Increased by 20% more (was 1.5) */
+        transform: translateX(-50%) scale(2.5);  /* Much larger scale for better visibility */
         transform-origin: center bottom;
         top: auto;
         z-index: 5;
