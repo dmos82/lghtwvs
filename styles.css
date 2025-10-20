@@ -99,12 +99,15 @@ body {
     transform: translate3d(-50%, -50%, 0);
 }
 
-/* lghtwvs 8 - positioned at bottom to hide cut-off legs (DESKTOP) */
+/* lghtwvs 8 - positioned at bottom on DESKTOP too */
 .hero-layer:nth-child(3) {
-    position: absolute;  /* Ensure absolute positioning on desktop */
-    top: 70%;
+    position: fixed;
+    bottom: -20%;  /* Negative to compensate for transparent areas */
     left: 50%;
-    transform: translate3d(-50%, -50%, 0) scale(1);
+    transform: translateX(-50%) scale(1.5);  /* Larger for desktop too */
+    transform-origin: center bottom;
+    top: auto;
+    z-index: 5;
 }
 
 /* Overlay text - always visible from start */
