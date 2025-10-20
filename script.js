@@ -348,13 +348,13 @@ class CanvasParallax {
             this.ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
             this.ctx.shadowBlur = 20;
 
-            // Draw DAVID (moving left) - wider spacing
-            const spacing = this.canvas.width * 0.15;
+            // Draw DAVID (moving left) - extra wide spacing to prevent overlap
+            const spacing = this.canvas.width * 0.25; // Increased from 0.15 to 0.25
             const textY = this.centerY - 30;
             const davidX = this.centerX - spacing - (spread * 500);
             this.ctx.fillText('DAVID', davidX, textY);
 
-            // Draw MORIN (moving right) - wider spacing
+            // Draw MORIN (moving right) - extra wide spacing to prevent overlap
             const morinX = this.centerX + spacing + (spread * 500);
             this.ctx.fillText('MORIN', morinX, textY);
 
