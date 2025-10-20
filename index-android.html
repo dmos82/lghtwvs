@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LGHTWVS - Canvas Version</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow-x: hidden;
+            font-family: 'Orbitron', monospace;
+            position: relative;
+            height: 2500px; /* Scroll height */
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        /* Info Panel Overlay - Hidden until scroll */
+        #infoPanel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90vw;
+            height: 90vw;
+            max-width: 800px;
+            max-height: 800px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+        }
+
+        #infoPanel.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .spinning-lp {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .info-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            height: 85%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.5rem 1rem;
+            color: #0ff;
+            text-align: center;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .artist-name-vinyl {
+            display: none; /* Removed to save space on record */
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { transform: translateX(-50%); }
+            92% { transform: translateX(-50%) translate(-2px, 2px); }
+            94% { transform: translateX(-50%) translate(2px, -2px); }
+            96% { transform: translateX(-50%) translate(-2px, -2px); }
+            98% { transform: translateX(-50%) translate(2px, 2px); }
+        }
+
+        /* Bio removed - no longer needed */
+
+        @media (max-width: 768px) {
+            #infoPanel {
+                width: 90vw;
+                height: 90vw;
+                max-width: 400px;
+                max-height: 400px;
+            }
+
+            .info-content {
+                width: 85%;
+                height: 85%;
+                padding: 0.8rem;
+                gap: 0.3rem;
+            }
+
+            .artist-name-vinyl {
+                display: none;
+            }
+
+            .links-section {
+                margin: 0.25rem 0;
+            }
+
+            .links-section h3 {
+                font-size: 0.5rem;
+                padding: 0.15rem 0.5rem;
+                margin-bottom: 0.2rem;
+                letter-spacing: 0.1em;
+            }
+
+            .link-button {
+                font-size: 0.45rem;
+                padding: 0.2rem 0.4rem;
+                background: linear-gradient(135deg, #0f0 0%, #0ff 100%);
+                color: #000;
+                font-weight: bold;
+                letter-spacing: 0.02em;
+            }
+
+            .store-button {
+                font-size: 0.6rem;
+                padding: 0.3rem 0.8rem;
+                margin-top: 0.2rem;
+                letter-spacing: 0.08em;
+            }
+
+            .links {
+                gap: 0.25rem;
+            }
+        }
+
+        /* Debug Info */
+        #debug {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            display: none;
+        }
+
+        #debug.visible {
+            display: block;
+        }
+
+        /* Loading screen */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f0;
+            font-size: 2rem;
+            z-index: 10000;
+        }
+
+        .links-section {
+            margin: 0.3rem 0;
+        }
+
+        .links-section h3 {
+            font-size: 0.6rem;
+            color: #000;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #0f0 0%, #0ff 100%);
+            padding: 0.2rem 0.8rem;
+            display: inline-block;
+            clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
+            font-weight: 900;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5),
+                        0 0 15px rgba(0, 255, 255, 0.3),
+                        inset 0 0 5px rgba(255, 255, 255, 0.2);
+        }
+
+        .links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            justify-content: center;
+        }
+
+        .link-button {
+            padding: 0.3rem 0.6rem;
+            background: linear-gradient(135deg, #0f0 0%, #0ff 100%);
+            color: #000;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.55rem;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.4),
+                        0 0 15px rgba(0, 255, 255, 0.2),
+                        inset 0 0 5px rgba(255, 255, 255, 0.15);
+        }
+
+        .link-button:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.7),
+                        0 0 50px rgba(0, 255, 255, 0.5),
+                        inset 0 0 20px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #0f0 0%, #fff 50%, #0ff 100%);
+        }
+
+        .store-button {
+            margin-top: 0.3rem;
+            font-size: 0.7rem;
+            padding: 0.4rem 1rem;
+            letter-spacing: 0.1em;
+        }
+
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading">Loading LGHTWVS...</div>
+
+    <!-- Main Canvas -->
+    <canvas id="canvas"></canvas>
+
+    <!-- Info Panel (HTML overlay for links) -->
+    <div id="infoPanel">
+        <img src="INFO/LGHTWVS LP.png" alt="Spinning LP" class="spinning-lp">
+        <!-- DAVID MORIN on the vinyl itself -->
+        <img src="INFO/DAVID-MORIN-transparent.png" alt="DAVID MORIN" class="artist-name-vinyl">
+        <div class="info-content">
+            <!-- Music Links -->
+            <div class="links-section">
+                <h3>MUSIC</h3>
+                <div class="links">
+                    <a href="https://open.spotify.com/artist/24kIGBNAXpwruRnnYjfN2p" target="_blank" class="link-button">Spotify</a>
+                    <a href="https://music.apple.com/es/artist/david-morin/1032026254" target="_blank" class="link-button">Apple Music</a>
+                    <a href="https://soundcloud.com/davidmorinmusic" target="_blank" class="link-button">SoundCloud</a>
+                    <a href="https://davidmorinmusic.bandcamp.com" target="_blank" class="link-button">Bandcamp</a>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="links-section">
+                <h3>SOCIALS</h3>
+                <div class="links">
+                    <a href="https://instagram.com/davidmorinmusic" target="_blank" class="link-button">Instagram</a>
+                    <a href="https://twitter.com/davidmorinmusic" target="_blank" class="link-button">Twitter</a>
+                    <a href="https://youtube.com/@davidmorinmusic" target="_blank" class="link-button">YouTube</a>
+                    <a href="https://tiktok.com/@davidmorinmusic" target="_blank" class="link-button">TikTok</a>
+                </div>
+            </div>
+
+            <!-- Press Links -->
+            <div class="links-section">
+                <h3>PRESS</h3>
+                <div class="links">
+                    <a href="mailto:info@davidmorinmusic.com" class="link-button">Press Contact</a>
+                    <a href="https://linktr.ee/davidmorin" target="_blank" class="link-button">Press Kit</a>
+                    <a href="mailto:davidmorinmusic@gmail.com" class="link-button">Email</a>
+                </div>
+            </div>
+
+            <a href="store.html" class="link-button store-button">LGHTWVS STORE</a>
+        </div>
+    </div>
+
+    <!-- Debug Info -->
+    <div id="debug">
+        <div>FPS: <span id="fps">0</span></div>
+        <div>Scroll: <span id="scrollPos">0</span></div>
+        <div>Zoom: <span id="zoomLevel">1.00</span>x</div>
+        <div>Layers Drawn: <span id="layersDrawn">0</span></div>
+    </div>
+
+    <script src="script-android.js"></script>
+</body>
+</html>

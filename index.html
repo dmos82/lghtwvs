@@ -32,13 +32,31 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Device Detection: Redirect mobile to canvas version -->
+    <!-- Device Detection: Redirect mobile devices to optimized versions -->
     <script>
         (function() {
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-            if (isMobile && !window.location.pathname.includes('index-mobile.html')) {
+            const ua = navigator.userAgent;
+            const currentPath = window.location.pathname;
+
+            // Detect Android devices
+            const isAndroid = /Android/i.test(ua);
+            // Detect iOS devices
+            const isIOS = /iPhone|iPad|iPod/i.test(ua);
+            // Detect other mobile
+            const isOtherMobile = /webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua) || window.innerWidth <= 768;
+
+            // Route to appropriate version
+            if (isAndroid && !currentPath.includes('index-android.html')) {
+                // Android gets optimized version with capped DPR and 30fps
+                window.location.href = 'index-android.html';
+            } else if (isIOS && !currentPath.includes('index-mobile.html')) {
+                // iOS gets full canvas version (works great on iPhone)
+                window.location.href = 'index-mobile.html';
+            } else if (isOtherMobile && !currentPath.includes('index-mobile.html') && !currentPath.includes('index-android.html')) {
+                // Other mobile gets iOS version by default
                 window.location.href = 'index-mobile.html';
             }
+            // Desktop stays on index.html (DOM version)
         })();
     </script>
 
