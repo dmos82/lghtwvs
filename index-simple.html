@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>David Morin - Light Waves</title>
+    <meta name="description" content="David Morin - Electronic Music Producer & Visual Artist">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            overflow-x: hidden;
+            font-family: 'Orbitron', monospace;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Background image */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('HERO/optimized/lghtwvs-11-optimized.jpg');
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        /* Info Panel */
+        .info-panel {
+            position: relative;
+            width: 90vw;
+            height: 90vw;
+            max-width: 500px;
+            max-height: 500px;
+            z-index: 100;
+        }
+
+        .spinning-lp {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .info-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            height: 85%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.5rem 1rem;
+            color: #0ff;
+            text-align: center;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .links-section {
+            margin: 0.3rem 0;
+        }
+
+        .links-section h3 {
+            font-size: 0.6rem;
+            color: #000;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #0f0 0%, #0ff 100%);
+            padding: 0.2rem 0.8rem;
+            display: inline-block;
+            clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
+            font-weight: 900;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5),
+                        0 0 15px rgba(0, 255, 255, 0.3),
+                        inset 0 0 5px rgba(255, 255, 255, 0.2);
+        }
+
+        .links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            justify-content: center;
+        }
+
+        .link-button {
+            padding: 0.3rem 0.6rem;
+            background: linear-gradient(135deg, #0f0 0%, #0ff 100%);
+            color: #000;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.55rem;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.4),
+                        0 0 15px rgba(0, 255, 255, 0.2),
+                        inset 0 0 5px rgba(255, 255, 255, 0.15);
+        }
+
+        .link-button:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.7),
+                        0 0 50px rgba(0, 255, 255, 0.5),
+                        inset 0 0 20px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #0f0 0%, #fff 50%, #0ff 100%);
+        }
+
+        .store-button {
+            margin-top: 0.3rem;
+            font-size: 0.7rem;
+            padding: 0.4rem 1rem;
+            letter-spacing: 0.1em;
+        }
+
+        @media (max-width: 768px) {
+            .links-section h3 {
+                font-size: 0.5rem;
+                padding: 0.15rem 0.5rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .link-button {
+                font-size: 0.45rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .store-button {
+                font-size: 0.6rem;
+                padding: 0.3rem 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+
+    <div class="info-panel">
+        <img src="INFO/LGHTWVS LP.png" alt="Spinning LP" class="spinning-lp">
+        <div class="info-content">
+            <!-- Music Links -->
+            <div class="links-section">
+                <h3>MUSIC</h3>
+                <div class="links">
+                    <a href="https://open.spotify.com/artist/24kIGBNAXpwruRnnYjfN2p" target="_blank" class="link-button">Spotify</a>
+                    <a href="https://music.apple.com/es/artist/david-morin/1032026254" target="_blank" class="link-button">Apple Music</a>
+                    <a href="https://soundcloud.com/davidmorinmusic" target="_blank" class="link-button">SoundCloud</a>
+                    <a href="https://davidmorinmusic.bandcamp.com" target="_blank" class="link-button">Bandcamp</a>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="links-section">
+                <h3>SOCIALS</h3>
+                <div class="links">
+                    <a href="https://instagram.com/davidmorinmusic" target="_blank" class="link-button">Instagram</a>
+                    <a href="https://twitter.com/davidmorinmusic" target="_blank" class="link-button">Twitter</a>
+                    <a href="https://youtube.com/@davidmorinmusic" target="_blank" class="link-button">YouTube</a>
+                    <a href="https://tiktok.com/@davidmorinmusic" target="_blank" class="link-button">TikTok</a>
+                </div>
+            </div>
+
+            <!-- Press Links -->
+            <div class="links-section">
+                <h3>PRESS</h3>
+                <div class="links">
+                    <a href="mailto:info@davidmorinmusic.com" class="link-button">Press Contact</a>
+                    <a href="https://linktr.ee/davidmorin" target="_blank" class="link-button">Press Kit</a>
+                    <a href="mailto:davidmorinmusic@gmail.com" class="link-button">Email</a>
+                </div>
+            </div>
+
+            <a href="store.html" class="link-button store-button">LGHTWVS STORE</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -38,6 +38,9 @@
             const ua = navigator.userAgent;
             const currentPath = window.location.pathname;
 
+            // Detect in-app browsers (Facebook, Instagram, TikTok, Twitter, LinkedIn, Messenger, etc.)
+            const isInAppBrowser = /FBAN|FBAV|Instagram|Twitter|Line|Snapchat|TikTok|LinkedIn|WeChat|WhatsApp|Messenger/i.test(ua);
+
             // Detect Android devices
             const isAndroid = /Android/i.test(ua);
             // Detect iOS devices
@@ -46,8 +49,11 @@
             const isOtherMobile = /webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua) || window.innerWidth <= 768;
 
             // Route to appropriate version
-            if (isAndroid && !currentPath.includes('index-android.html')) {
-                // Android gets optimized version with capped DPR and 30fps
+            if (isInAppBrowser && !currentPath.includes('index-simple.html')) {
+                // In-app browsers get simple static version (they're too glitchy for canvas)
+                window.location.href = 'index-simple.html';
+            } else if (isAndroid && !currentPath.includes('index-android.html')) {
+                // Android gets optimized version with compressed images
                 window.location.href = 'index-android.html';
             } else if (isIOS && !currentPath.includes('index-mobile.html')) {
                 // iOS gets full canvas version (works great on iPhone)

@@ -32,16 +32,16 @@ class CanvasParallax {
         this.targetZoom = 1;
         this.scrollHeight = 2500;
 
-        // Layer configuration - AGGRESSIVELY REDUCED for Android
-        // Only 4 total layers - absolute minimum for visual effect
+        // Layer configuration - OPTIMIZED COMPRESSED IMAGES for Android
+        // Only 4 total layers with compressed versions
         this.layers = [
-            // HERO layers - only 3 essential layers
-            { src: 'HERO/lghtwvs 11.JPG', speed: 1.8, type: 'hero', scale: 1 },
-            { src: 'HERO/lghtwvs 8.png', speed: 1.4, type: 'hero', scale: 1, isBottom: true },
-            { src: 'HERO/lghtwvs 1.png', speed: 0.5, type: 'hero', scale: 1 },
+            // HERO layers - using optimized compressed images
+            { src: 'HERO/optimized/lghtwvs-11-optimized.jpg', speed: 1.8, type: 'hero', scale: 1 },
+            { src: 'HERO/optimized/lghtwvs-8-optimized.png', speed: 1.4, type: 'hero', scale: 1, isBottom: true },
+            { src: 'HERO/optimized/lghtwvs-1-optimized.png', speed: 0.5, type: 'hero', scale: 1 },
 
-            // INFO layer - only 1 layer
-            { src: 'INFO/center-image-circle.png', speed: 1.0, type: 'info', scale: 0.001 }
+            // INFO layer - compressed
+            { src: 'INFO/optimized/center-image-circle-optimized.png', speed: 1.0, type: 'info', scale: 0.001 }
         ];
 
         this.images = new Map();
