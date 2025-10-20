@@ -141,16 +141,21 @@ class ZoomScroll {
 
             // HERO section - always visible, zooms normally
             if (section === 'hero') {
-                // Only update transform if it changed
-                const transformKey = `${layerZoom.toFixed(2)}`; // Reduced precision for mobile
-                if (!transforms.has(transformKey)) {
-                    transforms.set(transformKey, `translate3d(-50%, -50%, 0) scale(${layerZoom})`);
-                }
+                // Skip transform updates for lghtwvs 8 (3rd hero layer) - CSS handles bottom positioning
+                const isLayer8 = layer.src && layer.src.includes('lghtwvs 8');
 
-                // Only update DOM if transform actually changed
-                const newTransform = transforms.get(transformKey);
-                if (layer.style.transform !== newTransform) {
-                    layer.style.transform = newTransform;
+                if (!isLayer8) {
+                    // Only update transform if it changed
+                    const transformKey = `${layerZoom.toFixed(2)}`; // Reduced precision for mobile
+                    if (!transforms.has(transformKey)) {
+                        transforms.set(transformKey, `translate3d(-50%, -50%, 0) scale(${layerZoom})`);
+                    }
+
+                    // Only update DOM if transform actually changed
+                    const newTransform = transforms.get(transformKey);
+                    if (layer.style.transform !== newTransform) {
+                        layer.style.transform = newTransform;
+                    }
                 }
 
                 // Special handling for layer 9 fade
