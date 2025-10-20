@@ -448,6 +448,7 @@ body {
         font-size: 2.5rem;
         gap: 1.5em;  /* Slightly less gap on mobile */
         margin-bottom: 1.5rem;  /* Proportional spacing for mobile */
+        color: #fff;  /* White text on mobile instead of green */
     }
 
     /* Curtain effect adjustments for mobile */
