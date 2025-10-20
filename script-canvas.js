@@ -6,7 +6,14 @@
 class CanvasParallax {
     constructor() {
         this.canvas = document.getElementById('canvas');
-        this.ctx = this.canvas.getContext('2d');
+        this.ctx = this.canvas.getContext('2d', {
+            alpha: false,
+            desynchronized: true
+        });
+
+        // Enable better text rendering
+        this.ctx.imageSmoothingEnabled = true;
+        this.ctx.imageSmoothingQuality = 'high';
         this.loading = document.getElementById('loading');
         this.debug = document.getElementById('debug');
         this.infoPanel = document.getElementById('infoPanel');
@@ -118,8 +125,25 @@ class CanvasParallax {
     }
 
     resize() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        // Get device pixel ratio for high DPI displays (Retina, etc)
+        const dpr = window.devicePixelRatio || 1;
+
+        // Get display size
+        const displayWidth = window.innerWidth;
+        const displayHeight = window.innerHeight;
+
+        // Set actual canvas size scaled for device pixel ratio
+        this.canvas.width = displayWidth * dpr;
+        this.canvas.height = displayHeight * dpr;
+
+        // Scale canvas back down using CSS
+        this.canvas.style.width = displayWidth + 'px';
+        this.canvas.style.height = displayHeight + 'px';
+
+        // Store the DPR for use in drawing
+        this.dpr = dpr;
+
+        // Update center points for actual canvas size
         this.centerX = this.canvas.width / 2;
         this.centerY = this.canvas.height / 2;
     }
@@ -316,9 +340,9 @@ class CanvasParallax {
         if (scrollProgress < 0.35 || spread < 0.1) {
             this.ctx.save();
 
-            // Scale based on viewport - reduced to prevent truncation
-            const fontSize = Math.min(2, this.canvas.width * 0.003);
-            this.ctx.font = `bold ${fontSize}rem Orbitron`;
+            // Scale based on viewport - use pixel values for crisp text
+            const fontSize = Math.min(120, this.canvas.width * 0.12); // Use pixels instead of rem
+            this.ctx.font = `bold ${fontSize}px Orbitron`;
             this.ctx.fillStyle = this.isMobile ? '#fff' : '#0f0';
             this.ctx.textAlign = 'center';
             this.ctx.textBaseline = 'middle'; // Ensure text is properly centered
