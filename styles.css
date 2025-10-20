@@ -223,18 +223,13 @@ body {
 
 /* Old animated border removed - replaced with spinning LP record */
 
-.info-content h2 {
-    font-family: 'Orbitron', monospace;
-    font-size: 3rem;
-    font-weight: 900;
-    letter-spacing: 0.3em;
+.artist-name-image {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
     margin-bottom: 1rem;
-    background: linear-gradient(135deg, #0ff, #0f0, #f0f);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-transform: uppercase;
-    filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.8));
+    filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.8))
+            drop-shadow(0 0 30px rgba(0, 255, 255, 0.6));
     animation: glitch 3s infinite;
 }
 
@@ -465,18 +460,10 @@ body {
         padding: 1.5rem;  /* Reduced from 2rem */
     }
 
-    .info-content h2 {
-        font-size: 1.5rem;  /* Reduced from 2rem */
-        margin-bottom: 0.5rem;  /* Reduced margin */
-        background: linear-gradient(135deg, #0f0 0%, #0ff 100%);  /* Match store button style */
-        -webkit-background-clip: unset;  /* Reset gradient text clipping */
-        -webkit-text-fill-color: unset;  /* Reset text fill */
-        background-clip: unset;
-        color: #000;  /* Black text on gradient */
-        padding: 0.6rem 1.5rem;  /* Add padding for background */
-        clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);  /* Angled edges like store button */
-        filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.8));  /* Keep glow effect */
-        animation: glitch 3s infinite;  /* Keep glitch animation */
+    .artist-name-image {
+        width: 90%;  /* Slightly smaller on mobile */
+        max-width: 300px;  /* Smaller max width on mobile */
+        margin-bottom: 0.8rem;  /* Adjusted margin */
     }
 
     .bio {

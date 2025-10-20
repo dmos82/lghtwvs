@@ -85,7 +85,7 @@ class ZoomScroll {
         console.log(`   HERO layers: ${this.heroLayers.length} (reduced from 8 to 6 with merged images)`);
         console.log(`   INFO layers: ${this.infoLayers.length} (linear growth, balanced with HERO)`);
         console.log(`   Overlay text: Always visible (no fade-in lag)`);
-        console.log(`   Info panel & curtain: Appear at 28% scroll`);
+        console.log(`   Info panel & curtain: Appear at 12% scroll`);
         console.log(`   All scrolling stops at 55% (when spinning record fully appears)`);
         console.log(`   Press 'd' to toggle debug info`);
     }
@@ -196,8 +196,8 @@ class ZoomScroll {
         // Overlay is now always visible from start - no state changes needed
         // The curtain effect still happens at the right time
 
-        // Show info panel when INFO images have grown significantly (appears early in scroll)
-        const infoPanelThreshold = 0.28; // Moved to 28% for earlier appearance
+        // Show info panel when INFO images have grown significantly (appears very early in scroll)
+        const infoPanelThreshold = 0.12; // Moved to 12% for very early appearance
         if (scrollProgress > infoPanelThreshold) {
             this.infoPanel.classList.add('visible');
             // Trigger curtain effect when info panel opens
