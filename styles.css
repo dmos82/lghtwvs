@@ -428,9 +428,11 @@ body {
         max-height: 95%;
     }
 
-    /* lghtwvs 8 - push down on mobile to hide truncated legs */
+    /* lghtwvs 8 - position at bottom on mobile */
     .hero-layer:nth-child(3) {
-        top: 65%;
+        top: auto;
+        bottom: 0;
+        transform: translate3d(-50%, 0, 0) scale(1);
     }
 
     .overlay h1 {
