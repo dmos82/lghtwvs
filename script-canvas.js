@@ -55,7 +55,6 @@ class CanvasParallax {
         this.isAnimating = false;
 
         // Text overlay state
-        this.davidMorinAlpha = 1;
         this.davidMorinSpread = 0;
 
         this.init();
@@ -227,8 +226,8 @@ class CanvasParallax {
         // Draw text overlay (DAVID MORIN)
         this.drawTextOverlay(scrollProgress);
 
-        // Show/hide info panel
-        const infoPanelThreshold = 0.30;
+        // Show/hide info panel at scroll threshold
+        const infoPanelThreshold = 0.12; // 12% scroll - record appears early
         if (scrollProgress > infoPanelThreshold) {
             this.infoPanel.classList.add('visible');
             this.davidMorinSpread = Math.min(1, (scrollProgress - infoPanelThreshold) * 5);
@@ -345,21 +344,19 @@ class CanvasParallax {
             this.ctx.font = `bold ${fontSize}px Orbitron`;
             this.ctx.fillStyle = this.isMobile ? '#fff' : '#0f0';
             this.ctx.textAlign = 'center';
-            this.ctx.textBaseline = 'middle'; // Ensure text is properly centered
+            this.ctx.textBaseline = 'middle';
             this.ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
             this.ctx.shadowBlur = 20;
 
             // Draw DAVID (moving left) - wider spacing
-            const spacing = this.canvas.width * 0.15; // Dynamic spacing based on viewport
-            const textY = this.centerY - 30; // Move main text up slightly to make room
+            const spacing = this.canvas.width * 0.15;
+            const textY = this.centerY - 30;
             const davidX = this.centerX - spacing - (spread * 500);
             this.ctx.fillText('DAVID', davidX, textY);
 
             // Draw MORIN (moving right) - wider spacing
             const morinX = this.centerX + spacing + (spread * 500);
             this.ctx.fillText('MORIN', morinX, textY);
-
-            // LIGHT WAVES subtitle removed - was appearing on chest
 
             this.ctx.restore();
         }
